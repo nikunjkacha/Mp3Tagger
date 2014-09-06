@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">Mp3Tagger</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="tv_selection_default">Selected Items: </string>
 
 </resources>
