@@ -4,5 +4,21 @@
     <string name="app_name">Mp3Tagger</string>
     <string name="action_settings">Settings</string>
     <string name="tv_selection_default">Selected Items: </string>
+    
+    <string name="pref_rootDir">Root Directory</string>
+    <string name="pref_rootDir_sum">Default root directory from which the file selection interface will begin</string>
+    <string name="pref_rootDir_default">/extSdCard/Musik</string>
+    <string name="pref_playable">Play song on click</string>
+    <string name="pref_playable_sum">Whether a song should be played when clicking on it in the file selection menu</string>
+    <string name="pref_recursion">Directory recursion</string>
+    <string name="pref_recursion_sum">The Maximum depth to which directories will be scanned for files</string>
+    <string-array name="pref_recursion_entries">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+    <string name="pref_recursion_default">4</string>
 
 </resources>

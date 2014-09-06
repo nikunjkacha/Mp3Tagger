@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <EditTextPreference 
+        android:key="pref_rootDir"
+        android:title="@string/pref_rootDir"
+        android:summary="@string/pref_rootDir_sum"
+        android:defaultValue="@string/pref_rootDir_default"
+        />
+    <CheckBoxPreference
+        android:key="pref_playable"
+        android:title="@string/pref_playable"
+        android:summary="@string/pref_playable_sum"
+        android:defaultValue="true"
+        />
+    
+    <ListPreference 
+        android:key="pref_recursion"
+        android:title="@string/pref_recursion"
+        android:summary="@string/pref_recursion_sum"
+        android:entries="@array/pref_recursion_entries"
+        android:entryValues="@array/pref_recursion_entries"
+        android:defaultValue="@string/pref_recursion_default"
+        />
+</PreferenceScreen>

@@ -5,6 +5,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
 
 /**
  * First Fragment, per default shown on Application startup.
@@ -13,12 +15,14 @@ import android.view.ViewGroup;
  *
  */
 public class FileSelectionFragment extends Fragment {
+	private ListView lvFiles;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View root = inflater.inflate(R.layout.selection_fragment, container, false);
+		lvFiles = (ListView) root.findViewById(R.id.lvFiles);
+		lvFiles.setAdapter(new FileListAdapter());
 		
 		return root;
 	}
-
 }
