@@ -9,7 +9,9 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/textView1"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true" >
+        android:layout_alignParentTop="true" 
+        android:descendantFocusability="blocksDescendants"
+        >
 
     </ListView>
 

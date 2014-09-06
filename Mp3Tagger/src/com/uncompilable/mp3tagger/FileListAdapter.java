@@ -1,6 +1,8 @@
 package com.uncompilable.mp3tagger;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -25,7 +27,7 @@ public class FileListAdapter extends ArrayAdapter<File> {
 		super(context, R.layout.list_item, files);
 		
 		mContext = context;
-		mFiles = files;
+		setDisplayedFiles(files);
 	}
 	
 	@Override
@@ -41,11 +43,45 @@ public class FileListAdapter extends ArrayAdapter<File> {
 		TextView  tvName      = (TextView ) result.findViewById(R.id.tvFilename);
 		CheckBox  cbSelected  = (CheckBox ) result.findViewById(R.id.cbSelected);
 		
-		ivIcon.setImageResource(R.drawable.ic_directory);
+		ivIcon.setImageResource(mFiles[position].isFile()? R.drawable.ic_mp3file : R.drawable.ic_directory);
 		tvName.setText(mFiles[position].getName());
-		cbSelected.setSelected(false);
+		cbSelected.setChecked(false);;
 		
 		return result;
 	}
 
+	
+	public void setDisplayedFiles(final File[] files) {
+		mFiles = files.clone();
+		
+		//Sort entries: directory before files, compare same types by name
+		Arrays.sort(mFiles, new Comparator<File>() {
+			@Override
+			public int compare(File file1, File file2) {
+				if (file1.isDirectory() && file2.isFile()) return -1;
+				if (file1.isFile() && file2.isDirectory()) return 1;
+				return file1.getName().compareTo(file2.getName());
+			}
+		});
+		notifyDataSetChanged();
+	}
+	
+	public final File[] getDisplayedFiles() {
+		return mFiles;
+	}
+	
+	@Override
+	public boolean areAllItemsEnabled() {
+		return true;
+	}
+	
+	@Override
+	public boolean isEnabled(int position) {
+		return true;
+	}
+	
+	@Override
+	public int getCount() {
+		return mFiles.length;
+	}
 }

@@ -1,25 +1,36 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal" >
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:clickable="false"
+    android:focusable="false" >
 
     <ImageView
         android:id="@+id/ivIcon"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    
-    <TextView 
-        android:id="@+id/tvFilename"
-        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/empty"
-        />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:clickable="false"
+        android:focusable="false" />
+
+    <TextView
+        android:id="@+id/tvFilename"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_toRightOf="@id/ivIcon"
+        android:clickable="false"
+        android:focusable="false"
+        android:paddingLeft="10dp"
+        android:text="@string/empty" />
 
     <CheckBox
         android:id="@+id/cbSelected"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:focusable="false"
         android:text="@string/empty" />
 
-</LinearLayout>
+</RelativeLayout>
