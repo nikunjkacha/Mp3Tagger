@@ -17,7 +17,7 @@ import com.uncompilable.mp3tagger.error.NoTagAssociatedWithFileException;
  * @author dennis
  *
  */
-class TagCloud {
+public class TagCloud {
 	private Map<File, AbstractMP3Tag> mFileTagMap;
 	private Map<Id3Frame, Multiset<String>> mFrameValueMap;
 	
@@ -26,7 +26,7 @@ class TagCloud {
 	/**
 	 * Creates a new TagCloud with an empty file- and tagMap
 	 */
-	public TagCloud() {
+	protected TagCloud() {
 		mFileTagMap = new HashMap<File, AbstractMP3Tag>();
 		mFrameValueMap = new EnumMap<Id3Frame, Multiset<String>>(Id3Frame.class);
 
@@ -61,7 +61,7 @@ class TagCloud {
 	 * @throws InvalidFileException - If the file is null
 	 * @throws NoTagAssociatedWithFileException - If the tag is not valid
 	 */
-	public void addEntry(File file, AbstractMP3Tag tag) throws InvalidFileException, NoTagAssociatedWithFileException {
+	protected void addEntry(File file, AbstractMP3Tag tag) throws InvalidFileException, NoTagAssociatedWithFileException {
 		if (file == null) throw new InvalidFileException();
 		if (mFileTagMap.containsKey(file)) removeEntry(file);
 		mFileTagMap.put(file, tag);
@@ -80,7 +80,7 @@ class TagCloud {
 	 * @param file - The file to be removed
 	 * @throws InvalidFileException - If the file is null
 	 */
-	public void removeEntry(File file) {
+	protected void removeEntry(File file) {
 		AbstractMP3Tag tag = mFileTagMap.remove(file);
 		if (tag == null) return;
 		
@@ -117,5 +117,13 @@ class TagCloud {
 				tag.setTrackNumberOnAlbum((String) mFrameValueMap.get(Id3Frame.TRACK_NUMBER).toArray()[0]);
 			}
 		}
+	}
+	
+	/**
+	 * Returns the fileTagMap of the TagCloud.
+	 * @return - The FileTagMap
+	 */
+	public Map<File, AbstractMP3Tag> getTagMap() {
+		return this.mFileTagMap;
 	}
 }

@@ -22,38 +22,47 @@ import android.widget.TextView;
 public class FileListAdapter extends ArrayAdapter<File> {
 	private File[] mFiles;
 	private Context mContext;
-	
+	private int mIndexPlaying;
+
+	public static final int NONE_PLAYING = -1;
+
 	public FileListAdapter(Context context, File[] files) {
 		super(context, R.layout.list_item, files);
-		
+
 		mContext = context;
 		setDisplayedFiles(files);
+
+		mIndexPlaying = NONE_PLAYING;
 	}
-	
+
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View result = convertView;
-		
+
 		if (convertView == null) {
 			LayoutInflater inflater = (LayoutInflater)this.mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			result = inflater.inflate(R.layout.list_item, parent, false);
 		}
-		
+
 		ImageView ivIcon      = (ImageView) result.findViewById(R.id.ivIcon    );
 		TextView  tvName      = (TextView ) result.findViewById(R.id.tvFilename);
 		CheckBox  cbSelected  = (CheckBox ) result.findViewById(R.id.cbSelected);
-		
-		ivIcon.setImageResource(mFiles[position].isFile()? R.drawable.ic_mp3file : R.drawable.ic_directory);
+
+		if (mFiles[position].isDirectory()) {
+			ivIcon.setImageResource(R.drawable.ic_directory);
+		} else {
+			ivIcon.setImageResource(position == mIndexPlaying? R.drawable.ic_mp3file_playing : R.drawable.ic_mp3file);
+		}
 		tvName.setText(mFiles[position].getName());
 		cbSelected.setChecked(false);;
-		
+
 		return result;
 	}
 
-	
+
 	public void setDisplayedFiles(final File[] files) {
 		mFiles = files.clone();
-		
+
 		//Sort entries: directory before files, compare same types by name
 		Arrays.sort(mFiles, new Comparator<File>() {
 			@Override
@@ -65,21 +74,29 @@ public class FileListAdapter extends ArrayAdapter<File> {
 		});
 		notifyDataSetChanged();
 	}
-	
+
 	public final File[] getDisplayedFiles() {
 		return mFiles;
 	}
-	
+
+	public void setPlayingIndex(int index) {
+		if (index < 0 || index >= mFiles.length) {
+			mIndexPlaying = NONE_PLAYING;
+		} else {
+			mIndexPlaying = index;
+		}
+	}
+
 	@Override
 	public boolean areAllItemsEnabled() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean isEnabled(int position) {
 		return true;
 	}
-	
+
 	@Override
 	public int getCount() {
 		return mFiles.length;

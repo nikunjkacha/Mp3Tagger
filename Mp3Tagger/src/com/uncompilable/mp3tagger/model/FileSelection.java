@@ -69,4 +69,12 @@ public class FileSelection {
 	public Set<File> getSelection() {
 		return mFileSelection;
 	}
+	
+	/**
+	 * Returns the TagCloud for this selection.
+	 * @return - The TagCloud
+	 */
+	public TagCloud getTagCloud() {
+		return mTagCloud;
+	}
 }
