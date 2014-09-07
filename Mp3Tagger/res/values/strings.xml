@@ -31,5 +31,6 @@
     <string name="tvCoverContent">Album Cover</string>
     
     <string name="btnSaveTagsLabel">Save Tags</string>
-
+	<string name="btnSaveCoverLabel">Save Selected Cover</string>
+    
 </resources>
