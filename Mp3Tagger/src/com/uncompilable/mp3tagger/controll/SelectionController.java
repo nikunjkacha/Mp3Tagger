@@ -19,6 +19,7 @@ import android.content.SharedPreferences;
 public class SelectionController {
 	private final IOController mIOController;
 	private final FileSelection mSelection;
+	private final AlbumCoverController mAlbumController;
 	
 	final FileFilter mp3Filter;
 	final FileFilter mp3OrDirectoryFilter;
@@ -30,6 +31,8 @@ public class SelectionController {
 		super();
 		
 		mIOController = new IOController(this);
+		mAlbumController = new AlbumCoverController(this);
+		
 		mSelection = new FileSelection();
 		
 		this.mPreferences = prefs;
@@ -68,6 +71,10 @@ public class SelectionController {
 	
 	public IOController getIOController() {
 		return this.mIOController;
+	}
+	
+	public AlbumCoverController getAlbumCoverController() {
+		return this.mAlbumController;
 	}
 	
 	public FileSelection getSelection() {

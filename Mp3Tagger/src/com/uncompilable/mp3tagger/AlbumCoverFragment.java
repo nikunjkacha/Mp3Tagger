@@ -11,6 +11,17 @@ public class AlbumCoverFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View root = inflater.inflate(R.layout.albumcover_fragment, container, false);
 
+		final MainActivity main = (MainActivity)this.getActivity();
+		new Thread() {
+			@Override
+			public void run() {
+				main.getSelectionController().getAlbumCoverController().getAlbumImages("Blood%20Money");
+			}
+		}.start();
+		
+		root.findViewById(R.id.gvCoverGrid);
+		//AlbumGridAdapter adapter = new AlbumGridAdapter()
+
 		return root;
 	}
 }

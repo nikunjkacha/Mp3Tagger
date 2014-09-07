@@ -1,6 +1,7 @@
 package com.uncompilable.mp3tagger;
 
 import com.uncompilable.mp3tagger.R;
+import com.uncompilable.mp3tagger.controll.SelectionController;
 
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
@@ -11,6 +12,7 @@ import android.app.ActionBar.TabListener;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -22,12 +24,14 @@ import android.view.MenuItem;
  */
 public class MainActivity extends ActionBarActivity implements TabListener {
 	private ViewPager pager;
-
+	private SelectionController mSelectionController;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
+		mSelectionController = new SelectionController(PreferenceManager.getDefaultSharedPreferences(this));
 		
 		final ActionBar actionBar = this.getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -78,6 +82,10 @@ public class MainActivity extends ActionBarActivity implements TabListener {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	public SelectionController getSelectionController() {
+		return this.mSelectionController;
 	}
 
 	@Override

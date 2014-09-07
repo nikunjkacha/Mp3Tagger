@@ -2,11 +2,14 @@ package com.uncompilable.mp3tagger.controll;
 
 import java.io.File;
 import java.io.IOException;
+
 import org.farng.mp3.AbstractMP3Tag;
 import org.farng.mp3.MP3File;
 import org.farng.mp3.TagConstant;
 import org.farng.mp3.TagException;
 import org.farng.mp3.TagOptionSingleton;
+
+import android.media.Image;
 
 import com.uncompilable.mp3tagger.error.NoTagAssociatedWithFileException;
 import com.uncompilable.mp3tagger.model.TagCloud;
@@ -63,5 +66,9 @@ public class IOController {
 			MP3File mp3File = new MP3File(file);
 			mp3File.setID3v2Tag(tagCloud.getTagMap().get(file));
 		}
+	}
+	
+	public void writeAlbumCover(Image cover) {
+		
 	}
 }
