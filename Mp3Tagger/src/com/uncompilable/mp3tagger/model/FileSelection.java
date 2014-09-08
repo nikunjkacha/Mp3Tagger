@@ -1,9 +1,11 @@
 package com.uncompilable.mp3tagger.model;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
-
+import java.util.TreeMap;
 import org.farng.mp3.AbstractMP3Tag;
 import org.farng.mp3.id3.ID3v1;
 
@@ -20,14 +22,14 @@ import com.uncompilable.mp3tagger.utility.Constants;
  */
 public class FileSelection {
 	private TagCloud mTagCloud;
-	private Set<File> mFileSelection;
+	private Map<File, List<File>> mFileSelection;
 	
 	/**
 	 * Creates a new, empty Selection
 	 */
 	public FileSelection() {
 		mTagCloud = new TagCloud();
-		mFileSelection = new TreeSet<File>();
+		mFileSelection = new TreeMap<File, List<File>>();
 	}
 	
 	/**
@@ -37,7 +39,7 @@ public class FileSelection {
 	 * @throws InvalidFileException - If the file is not a valid mp3-file
 	 */
 	public void addFile(File file, AbstractMP3Tag tag) throws InvalidFileException {
-		if (mFileSelection.contains(file)) { //Mustn't add multiple copies of a file
+		if (mFileSelection.containsKey(file)) { //Mustn't add multiple copies of a file
 			Log.w(Constants.MAIN_TAG, "Tried to add file " + file.getName() + " that was already selected.");
 			return;
 		}
@@ -48,7 +50,14 @@ public class FileSelection {
 			Log.w(Constants.MAIN_TAG, "WARNING: Tried to add file " + file.getName() + " without a valid ID3Tag.");
 			addFile(file, new ID3v1());
 		}
-		mFileSelection.add(file);
+		
+		List<File> parents = new ArrayList<File>();
+		File parent = file.getParentFile();
+		while (parent != null) {
+			parents.add(parent);
+			parent = parent.getParentFile();
+		}
+		mFileSelection.put(file, parents);
 	}
 	
 	/**
@@ -56,9 +65,26 @@ public class FileSelection {
 	 * @param file - The file to be removed
 	 */
 	public void removeFile(File file) {
-		if (mFileSelection.contains(file)) {
+		if (mFileSelection.containsKey(file)) {
 			mFileSelection.remove(file);
 			mTagCloud.removeEntry(file);
+		}
+	}
+	
+	/**
+	 * If the parameter is a file, returns whether the file is contained in the selection.
+	 * If the parameter is a directory, returns whether this selection contains a file that is in the directory
+	 * @param file - The file to look for
+	 * @return 
+	 */
+	public boolean contains(File file) {
+		if (file.isFile()) {
+			return mFileSelection.containsKey(file);
+		} else {
+			for (List<File> query : mFileSelection.values()) {
+				if (query.contains(file)) return true;
+			}
+			return false;
 		}
 	}
 	
@@ -67,7 +93,7 @@ public class FileSelection {
 	 * @return - The Files
 	 */
 	public Set<File> getSelection() {
-		return mFileSelection;
+		return mFileSelection.keySet();
 	}
 	
 	/**

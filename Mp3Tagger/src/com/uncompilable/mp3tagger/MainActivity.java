@@ -40,7 +40,7 @@ public class MainActivity extends ActionBarActivity implements TabListener {
 		actionBar.addTab(actionBar.newTab().setText("Edit Tags").setTabListener(this));
 		actionBar.addTab(actionBar.newTab().setText("Album Covers").setTabListener(this));
 		
-		CustomFragmentPagerAdapter pagerAdapter = new CustomFragmentPagerAdapter(getSupportFragmentManager());
+		final CustomFragmentPagerAdapter pagerAdapter = new CustomFragmentPagerAdapter(getSupportFragmentManager());
 		pager = (ViewPager) findViewById(R.id.pager);
 		pager.setAdapter(pagerAdapter);
 		pager.setOnPageChangeListener(new OnPageChangeListener() {
@@ -55,6 +55,9 @@ public class MainActivity extends ActionBarActivity implements TabListener {
 			@Override
 			public void onPageSelected(int index) {
 				actionBar.setSelectedNavigationItem(index);
+				if (index == 1) {
+					((TagEditFragment)pagerAdapter.getItem(1)).refresh();
+				}
 			}
 		});
 	}

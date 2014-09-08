@@ -1,15 +1,25 @@
 package com.uncompilable.mp3tagger;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import org.farng.mp3.TagException;
+
+import com.uncompilable.mp3tagger.error.InvalidFileException;
+import com.uncompilable.mp3tagger.error.NoTagAssociatedWithFileException;
+import com.uncompilable.mp3tagger.utility.Constants;
+
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,19 +32,21 @@ import android.widget.TextView;
 public class FileListAdapter extends ArrayAdapter<File> {
 	private File[] mFiles;
 	private int mIndexPlaying;
+	private final MainActivity mMain;
 
 	public static final int NONE_PLAYING = -1;
 
-	public FileListAdapter(Context context, File[] files) {
-		super(context, R.layout.list_item, files);
-
+	public FileListAdapter(MainActivity main, File[] files) {
+		super(main, R.layout.list_item, files);
+		
 		setDisplayedFiles(files);
 
+		this.mMain = main;
 		mIndexPlaying = NONE_PLAYING;
 	}
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public View getView(final int position, final View convertView, final ViewGroup parent) {
 		View result = convertView;
 
 		if (convertView == null) {
@@ -42,9 +54,9 @@ public class FileListAdapter extends ArrayAdapter<File> {
 			result = inflater.inflate(R.layout.list_item, parent, false);
 		}
 
-		ImageView ivIcon      = (ImageView) result.findViewById(R.id.ivIcon    );
-		TextView  tvName      = (TextView ) result.findViewById(R.id.tvFilename);
-		CheckBox  cbSelected  = (CheckBox ) result.findViewById(R.id.cbSelected);
+		final ImageView ivIcon      = (ImageView) result.findViewById(R.id.ivIcon    );
+		final TextView  tvName      = (TextView ) result.findViewById(R.id.tvFilename);
+		final CheckBox  cbSelected  = (CheckBox ) result.findViewById(R.id.cbSelected);
 
 		if (mFiles[position].isDirectory()) {
 			ivIcon.setImageResource(R.drawable.ic_directory);
@@ -52,7 +64,24 @@ public class FileListAdapter extends ArrayAdapter<File> {
 			ivIcon.setImageResource(position == mIndexPlaying? R.drawable.ic_mp3file_playing : R.drawable.ic_mp3file);
 		}
 		tvName.setText(mFiles[position].getName());
-		cbSelected.setChecked(false);;
+		
+		cbSelected.setChecked(mMain.getSelectionController().getSelection().contains(mFiles[position]));
+		cbSelected.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+			@Override
+			public void onCheckedChanged(CompoundButton button, boolean state) {
+				if (cbSelected.isChecked()) {
+					try {
+						mMain.getSelectionController().addToSelection(mFiles[position]);
+					} catch (InvalidFileException | IOException | TagException
+							| NoTagAssociatedWithFileException e) {
+						Log.e(Constants.MAIN_TAG, "ERROR: could not add file " + mFiles[position] + " to Selection!");
+					}
+				} else {
+					mMain.getSelectionController().removeFromSelection(mFiles[position]);
+				}
+			}
+		});
 
 		return result;
 	}

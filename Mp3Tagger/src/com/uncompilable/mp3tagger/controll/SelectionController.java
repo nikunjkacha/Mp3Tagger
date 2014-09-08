@@ -83,14 +83,14 @@ public class SelectionController {
 
 	
 	private List<File> scanDirectory(File file) {
-		return scanDirectory(file, mPreferences.getInt(Constants.PREF_KEY_RECURSION, 5));
+		return scanDirectory(file, Integer.parseInt(mPreferences.getString(Constants.PREF_KEY_RECURSION, "5")));
 	}
 
 	private List<File> scanDirectory(File file, int n) {
 		List<File> result = new ArrayList<File>();
 		if (file.isFile() && mp3Filter.accept(file)) {
 			result.add(file);
-		} else if (n > 0) {
+		} else if (n > 0 && file.isDirectory()) {
 			result.addAll(Arrays.asList(file.listFiles(mp3OrDirectoryFilter)));
 			List<File> toAdd = new ArrayList<File>();
 			

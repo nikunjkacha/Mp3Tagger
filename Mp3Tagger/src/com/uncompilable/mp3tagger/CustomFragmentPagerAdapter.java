@@ -9,20 +9,28 @@ public class CustomFragmentPagerAdapter extends FragmentPagerAdapter {
 	private static final int TAG_FRAGMENT = 1;
 	private static final int COVER_FRAGMENT = 2;
 	
+	private final FileSelectionFragment mSelectionFragment;
+	private final TagEditFragment mTagFragment;
+	private final AlbumCoverFragment mCoverFragment;
+	
 
 	public CustomFragmentPagerAdapter(FragmentManager fm) {
 		super(fm);
+		
+		mSelectionFragment = new FileSelectionFragment();
+		mTagFragment       = new TagEditFragment      ();
+		mCoverFragment     = new AlbumCoverFragment  ();
 	}
 
 	@Override
 	public Fragment getItem(int index) {
 		switch (index) {
 		case SELECTION_FRAGMENT:
-			return new FileSelectionFragment();
+			return mSelectionFragment;
 		case TAG_FRAGMENT:
-			return new TagEditFragment();
+			return mTagFragment;
 		case COVER_FRAGMENT:
-			return new AlbumCoverFragment();
+			return mCoverFragment;
 		}
 		return null;
 	}

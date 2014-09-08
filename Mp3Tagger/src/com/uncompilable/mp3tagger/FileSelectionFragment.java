@@ -46,7 +46,7 @@ public class FileSelectionFragment extends Fragment {
 
 		mPlaying = null;
 
-		final FileListAdapter listAdapter = new FileListAdapter(this.getActivity(), new File(mCurrentPath).listFiles());
+		final FileListAdapter listAdapter = new FileListAdapter((MainActivity)this.getActivity(), new File(mCurrentPath).listFiles());
 		populateAdapter(listAdapter);
 
 		mLvFiles = (ListView) root.findViewById(R.id.lvFiles);
