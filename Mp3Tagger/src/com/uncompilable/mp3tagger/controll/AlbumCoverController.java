@@ -12,8 +12,6 @@ import org.json.JSONObject;
 
 import com.uncompilable.mp3tagger.utility.Constants;
 
-import android.media.Image;
-import android.net.Uri;
 import android.util.Log;
 
 public class AlbumCoverController {

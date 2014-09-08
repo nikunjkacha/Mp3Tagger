@@ -3,16 +3,15 @@ package com.uncompilable.mp3tagger.controll;
 import java.io.File;
 import java.io.IOException;
 
-import org.farng.mp3.AbstractMP3Tag;
-import org.farng.mp3.MP3File;
-import org.farng.mp3.TagConstant;
-import org.farng.mp3.TagException;
-import org.farng.mp3.TagOptionSingleton;
-
 import android.media.Image;
 
+import com.mpatric.mp3agic.ID3v2;
+import com.mpatric.mp3agic.InvalidDataException;
+import com.mpatric.mp3agic.Mp3File;
+import com.mpatric.mp3agic.NotSupportedException;
+import com.mpatric.mp3agic.UnsupportedTagException;
 import com.uncompilable.mp3tagger.error.NoTagAssociatedWithFileException;
-import com.uncompilable.mp3tagger.model.TagCloud;
+
 
 /**
  * Controller for Input / Output
@@ -30,7 +29,6 @@ public class IOController {
 		super();
 		
 		this.mSelectionController = selectionController;
-		TagOptionSingleton.getInstance().setDefaultSaveMode(TagConstant.MP3_FILE_SAVE_OVERWRITE);
 	}
 	
 	/**
@@ -40,31 +38,29 @@ public class IOController {
 	 * @throws IOException
 	 * @throws TagException
 	 * @throws NoTagAssociatedWithFileException
+	 * @throws InvalidDataException 
+	 * @throws UnsupportedTagException 
+	 * @throws CannotReadException 
 	 */
-	public AbstractMP3Tag readFile(File file) throws IOException, TagException, NoTagAssociatedWithFileException {
-		MP3File mp3 = new MP3File(file);
-		
-		if (mp3.hasID3v2Tag()) {
-			return mp3.getID3v2Tag();
-		} else if (mp3.hasID3v1Tag()) {
-			return mp3.getID3v1Tag();
-		} else {
-			throw new NoTagAssociatedWithFileException();
-		}
+	public ID3v2 readFile(File file) throws IOException, NoTagAssociatedWithFileException, UnsupportedTagException, InvalidDataException {
+		Mp3File mp3 = new Mp3File(file.getAbsolutePath());
+		return mp3.getId3v2Tag();
 	}
 	
 	/**
 	 * Writes changes in the TagCloud into the files
 	 * @throws IOException
+	 * @throws InvalidDataException 
+	 * @throws UnsupportedTagException 
+	 * @throws NotSupportedException 
 	 * @throws TagException
 	 */
-	public void writeTags() throws IOException, TagException {
-		TagCloud tagCloud = mSelectionController.getSelection().getTagCloud();
-		tagCloud.writeLocalChanges();
+	public void writeTags() throws IOException, UnsupportedTagException, InvalidDataException, NotSupportedException {
 		
-		for (File file : tagCloud.getTagMap().keySet()) {
-			MP3File mp3File = new MP3File(file);
-			mp3File.setID3v2Tag(tagCloud.getTagMap().get(file));
+		for (File file : mSelectionController.getSelection().getFileSet()) {
+			Mp3File mp3 = new Mp3File(file.getAbsolutePath());
+			mp3.setId3v2Tag(mSelectionController.getSelection().getTagCloud().getTagMap().get(file));
+			mp3.save(file.getName());
 		}
 	}
 	

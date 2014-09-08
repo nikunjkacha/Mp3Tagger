@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.farng.mp3.TagException;
-
+import com.mpatric.mp3agic.InvalidDataException;
+import com.mpatric.mp3agic.UnsupportedTagException;
 import com.uncompilable.mp3tagger.error.InvalidFileException;
 import com.uncompilable.mp3tagger.error.NoTagAssociatedWithFileException;
 import com.uncompilable.mp3tagger.model.FileSelection;
@@ -53,7 +53,7 @@ public class SelectionController {
 		};
 	}
 	
-	public void addToSelection(File file) throws InvalidFileException, IOException, TagException, NoTagAssociatedWithFileException {
+	public void addToSelection(File file) throws InvalidFileException, IOException, NoTagAssociatedWithFileException, UnsupportedTagException, InvalidDataException {
 		for (File toAdd : scanDirectory(file)) {
 			mSelection.addFile(toAdd, mIOController.readFile(toAdd));
 		}

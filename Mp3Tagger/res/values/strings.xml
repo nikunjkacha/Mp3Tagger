@@ -32,5 +32,8 @@
     
     <string name="btnSaveTagsLabel">Save Tags</string>
 	<string name="btnSaveCoverLabel">Save Selected Cover</string>
+	
+	<string name="noValues">[None]</string>
+	<string name="multipleValues">[Multiple]</string>
     
 </resources>

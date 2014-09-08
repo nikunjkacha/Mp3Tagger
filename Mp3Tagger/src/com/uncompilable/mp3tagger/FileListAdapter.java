@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import org.farng.mp3.TagException;
-
+import com.mpatric.mp3agic.InvalidDataException;
+import com.mpatric.mp3agic.UnsupportedTagException;
 import com.uncompilable.mp3tagger.error.InvalidFileException;
 import com.uncompilable.mp3tagger.error.NoTagAssociatedWithFileException;
 import com.uncompilable.mp3tagger.utility.Constants;
@@ -73,9 +73,8 @@ public class FileListAdapter extends ArrayAdapter<File> {
 				if (cbSelected.isChecked()) {
 					try {
 						mMain.getSelectionController().addToSelection(mFiles[position]);
-					} catch (InvalidFileException | IOException | TagException
-							| NoTagAssociatedWithFileException e) {
-						Log.e(Constants.MAIN_TAG, "ERROR: could not add file " + mFiles[position] + " to Selection!");
+					} catch (InvalidFileException | IOException | NoTagAssociatedWithFileException | UnsupportedTagException | InvalidDataException e) {
+						Log.e(Constants.MAIN_TAG, "ERROR: could not add file " + mFiles[position] + " to Selection!", e);
 					}
 				} else {
 					mMain.getSelectionController().removeFromSelection(mFiles[position]);

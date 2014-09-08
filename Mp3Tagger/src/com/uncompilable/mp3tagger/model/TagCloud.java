@@ -1,14 +1,16 @@
 package com.uncompilable.mp3tagger.model;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.farng.mp3.AbstractMP3Tag;
-
 import com.google.common.collect.Multiset;
 import com.google.common.collect.TreeMultiset;
+import com.mpatric.mp3agic.ID3v1Genres;
+import com.mpatric.mp3agic.ID3v2;
 import com.uncompilable.mp3tagger.error.InvalidFileException;
 import com.uncompilable.mp3tagger.error.NoTagAssociatedWithFileException;
 
@@ -18,7 +20,7 @@ import com.uncompilable.mp3tagger.error.NoTagAssociatedWithFileException;
  *
  */
 public class TagCloud {
-	private Map<File, AbstractMP3Tag> mFileTagMap;
+	private Map<File, ID3v2> mFileTagMap;
 	private Map<Id3Frame, Multiset<String>> mFrameValueMap;
 	
 	private int mSelectedFields;
@@ -27,7 +29,7 @@ public class TagCloud {
 	 * Creates a new TagCloud with an empty file- and tagMap
 	 */
 	protected TagCloud() {
-		mFileTagMap = new HashMap<File, AbstractMP3Tag>();
+		mFileTagMap = new HashMap<File, ID3v2>();
 		mFrameValueMap = new EnumMap<Id3Frame, Multiset<String>>(Id3Frame.class);
 
 		for (Id3Frame frame : Id3Frame.values()) {
@@ -50,6 +52,16 @@ public class TagCloud {
 		//Mark changed frame as selected
 		mSelectedFields |=value.getFrame().getSelectionValue();
 	}
+	
+	/**
+	 * Returns the Collection of Values associated with an ID3Tag.
+	 * @param frame - The frame whose values are to be returned
+	 * @return - The associated values. If there are no associated values: returns an empty Collection.
+	 */
+	public Collection<String> getValues(Id3Frame frame) {
+		Collection<String> values = mFrameValueMap.get(frame);
+		return values == null? new ArrayList<String>() : values;
+	}
 
 	/**
 	 * Adds an Entry to the TagCloud.
@@ -61,18 +73,18 @@ public class TagCloud {
 	 * @throws InvalidFileException - If the file is null
 	 * @throws NoTagAssociatedWithFileException - If the tag is not valid
 	 */
-	protected void addEntry(File file, AbstractMP3Tag tag) throws InvalidFileException, NoTagAssociatedWithFileException {
+	protected void addEntry(File file, ID3v2 tag) throws InvalidFileException, NoTagAssociatedWithFileException {
 		if (file == null) throw new InvalidFileException();
 		if (mFileTagMap.containsKey(file)) removeEntry(file);
 		mFileTagMap.put(file, tag);
-
+		
 		//Adjust the frameValueMap
-		if (tag.getSongTitle      	 () != null) mFrameValueMap.get(Id3Frame.TITLE       ).add(tag.getSongTitle     	());
-		if (tag.getLeadArtist    	 () != null) mFrameValueMap.get(Id3Frame.ARTIST      ).add(tag.getLeadArtist    	());
-		if (tag.getAlbumTitle    	 () != null) mFrameValueMap.get(Id3Frame.ALBUM_TITLE ).add(tag.getAlbumTitle    	());
-		if (tag.getAuthorComposer	 () != null) mFrameValueMap.get(Id3Frame.COMPOSER    ).add(tag.getAuthorComposer	());
-		if (tag.getSongGenre     	 () != null) mFrameValueMap.get(Id3Frame.GENRE       ).add(tag.getSongGenre     	());
-		if (tag.getTrackNumberOnAlbum() != null) mFrameValueMap.get(Id3Frame.TRACK_NUMBER).add(tag.getTrackNumberOnAlbum());
+		if (validValue(tag.getTitle   		  ())) mFrameValueMap.get(Id3Frame.TITLE       ).add(tag.getTitle    	    ());
+		if (validValue(tag.getArtist  		  ())) mFrameValueMap.get(Id3Frame.ARTIST      ).add(tag.getArtist  		()); 
+		if (validValue(tag.getAlbum   		  ())) mFrameValueMap.get(Id3Frame.ALBUM_TITLE ).add(tag.getAlbum   		());
+		if (validValue(tag.getComposer		  ())) mFrameValueMap.get(Id3Frame.COMPOSER    ).add(tag.getComposer		());
+		if (validValue(tag.getGenreDescription())) mFrameValueMap.get(Id3Frame.GENRE       ).add(tag.getGenreDescription());
+		if (validValue(tag.getTrack			  ())) mFrameValueMap.get(Id3Frame.TRACK_NUMBER).add(tag.getTrack			());
 	}
 
 	/**
@@ -81,40 +93,41 @@ public class TagCloud {
 	 * @throws InvalidFileException - If the file is null
 	 */
 	protected void removeEntry(File file) {
-		AbstractMP3Tag tag = mFileTagMap.remove(file);
+		ID3v2 tag = mFileTagMap.remove(file);
 		if (tag == null) return;
 		
 		//Adjust the frameValueMap
-		if (tag.getSongTitle      	 () != null) mFrameValueMap.get(Id3Frame.TITLE       ).remove(tag.getSongTitle     	());
-		if (tag.getLeadArtist    	 () != null) mFrameValueMap.get(Id3Frame.ARTIST      ).remove(tag.getLeadArtist    	());
-		if (tag.getAlbumTitle    	 () != null) mFrameValueMap.get(Id3Frame.ALBUM_TITLE ).remove(tag.getAlbumTitle    	());
-		if (tag.getAuthorComposer	 () != null) mFrameValueMap.get(Id3Frame.COMPOSER    ).remove(tag.getAuthorComposer	());
-		if (tag.getSongGenre     	 () != null) mFrameValueMap.get(Id3Frame.GENRE       ).remove(tag.getSongGenre     	());
-		if (tag.getTrackNumberOnAlbum() != null) mFrameValueMap.get(Id3Frame.TRACK_NUMBER).remove(tag.getTrackNumberOnAlbum());
+		if (validValue(tag.getTitle   		  ())) mFrameValueMap.get(Id3Frame.TITLE       ).remove(tag.getTitle    	    ());
+		if (validValue(tag.getArtist  		  ())) mFrameValueMap.get(Id3Frame.ARTIST      ).remove(tag.getArtist  		()); 
+		if (validValue(tag.getAlbum   		  ())) mFrameValueMap.get(Id3Frame.ALBUM_TITLE ).remove(tag.getAlbum   		());
+		if (validValue(tag.getComposer		  ())) mFrameValueMap.get(Id3Frame.COMPOSER    ).remove(tag.getComposer		());
+		if (validValue(tag.getGenreDescription())) mFrameValueMap.get(Id3Frame.GENRE       ).remove(tag.getGenreDescription());
+		if (validValue(tag.getTrack			  ())) mFrameValueMap.get(Id3Frame.TRACK_NUMBER).remove(tag.getTrack			());
 	}
 	
 	/**
 	 * Writes every value that has been set via the setValue-Method into the tags of the fileTagMap.
 	 */
 	public void writeLocalChanges() {
-		for (AbstractMP3Tag tag : mFileTagMap.values()) {
+		for (ID3v2 tag : mFileTagMap.values()) {
 			if ((mSelectedFields & Id3Frame.TITLE.getSelectionValue()) != 0) {
-				tag.setSongTitle((String) mFrameValueMap.get(Id3Frame.TITLE).toArray()[0]);
+				tag.setTitle((String) mFrameValueMap.get(Id3Frame.TITLE).toArray()[0]);
 			}
 			if ((mSelectedFields & Id3Frame.ARTIST.getSelectionValue()) != 0) {
-				tag.setLeadArtist((String) mFrameValueMap.get(Id3Frame.ARTIST).toArray()[0]);
+				tag.setArtist((String) mFrameValueMap.get(Id3Frame.ARTIST).toArray()[0]);
 			}
 			if ((mSelectedFields & Id3Frame.ALBUM_TITLE.getSelectionValue()) != 0) {
-				tag.setAlbumTitle((String) mFrameValueMap.get(Id3Frame.ALBUM_TITLE).toArray()[0]);
+				tag.setAlbum((String) mFrameValueMap.get(Id3Frame.ALBUM_TITLE).toArray()[0]);
 			}
 			if ((mSelectedFields & Id3Frame.COMPOSER.getSelectionValue()) != 0) {
-				tag.setAuthorComposer((String) mFrameValueMap.get(Id3Frame.COMPOSER).toArray()[0]);
+				tag.setComposer((String) mFrameValueMap.get(Id3Frame.COMPOSER).toArray()[0]);
 			}
 			if ((mSelectedFields & Id3Frame.GENRE.getSelectionValue()) != 0) {
-				tag.setSongGenre((String) mFrameValueMap.get(Id3Frame.GENRE).toArray()[0]);
+				tag.setGenreDescription((String) mFrameValueMap.get(Id3Frame.GENRE).toArray()[0]);
+				tag.setGenre(ID3v1Genres.matchGenreDescription((String)mFrameValueMap.get(Id3Frame.GENRE).toArray()[0]));
 			}
 			if ((mSelectedFields & Id3Frame.TRACK_NUMBER.getSelectionValue()) != 0) {
-				tag.setTrackNumberOnAlbum((String) mFrameValueMap.get(Id3Frame.TRACK_NUMBER).toArray()[0]);
+				tag.setTrack((String) mFrameValueMap.get(Id3Frame.TRACK_NUMBER).toArray()[0]);
 			}
 		}
 	}
@@ -123,7 +136,11 @@ public class TagCloud {
 	 * Returns the fileTagMap of the TagCloud.
 	 * @return - The FileTagMap
 	 */
-	public Map<File, AbstractMP3Tag> getTagMap() {
+	public Map<File, ID3v2> getTagMap() {
 		return this.mFileTagMap;
+	}
+	
+	private boolean validValue(String value) {
+		return value != null && !value.isEmpty();
 	}
 }

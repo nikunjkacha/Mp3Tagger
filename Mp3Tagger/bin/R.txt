@@ -360,8 +360,9 @@ int layout albumcover_fragment 0x7f030019
 int layout covergrid_item 0x7f03001a
 int layout list_item 0x7f03001b
 int layout selection_fragment 0x7f03001c
-int layout support_simple_spinner_dropdown_item 0x7f03001d
-int layout tagedit_fragment 0x7f03001e
+int layout simple_textview_item 0x7f03001d
+int layout support_simple_spinner_dropdown_item 0x7f03001e
+int layout tagedit_fragment 0x7f03001f
 int menu main 0x7f0e0000
 int string abc_action_bar_home_description 0x7f0b0001
 int string abc_action_bar_up_description 0x7f0b0002
@@ -381,6 +382,8 @@ int string app_name 0x7f0b000d
 int string btnSaveCoverLabel 0x7f0b0021
 int string btnSaveTagsLabel 0x7f0b0020
 int string empty 0x7f0b0010
+int string multipleValues 0x7f0b0023
+int string noValues 0x7f0b0022
 int string pref_playable 0x7f0b0014
 int string pref_playable_sum 0x7f0b0015
 int string pref_recursion 0x7f0b0016

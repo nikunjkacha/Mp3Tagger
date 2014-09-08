@@ -4,23 +4,25 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
 import java.util.Set;
 import java.util.TreeMap;
-import org.farng.mp3.AbstractMP3Tag;
-import org.farng.mp3.id3.ID3v1;
 
 import android.util.Log;
 
+import com.mpatric.mp3agic.ID3v2;
+import com.mpatric.mp3agic.ID3v24Tag;
 import com.uncompilable.mp3tagger.error.InvalidFileException;
 import com.uncompilable.mp3tagger.error.NoTagAssociatedWithFileException;
 import com.uncompilable.mp3tagger.utility.Constants;
+
 
 /**
  * Model class for handling file selections.
  * @author dennis
  *
  */
-public class FileSelection {
+public class FileSelection extends Observable {
 	private TagCloud mTagCloud;
 	private Map<File, List<File>> mFileSelection;
 	
@@ -38,7 +40,7 @@ public class FileSelection {
 	 * @param tag - The tag to associate with the file
 	 * @throws InvalidFileException - If the file is not a valid mp3-file
 	 */
-	public void addFile(File file, AbstractMP3Tag tag) throws InvalidFileException {
+	public void addFile(File file, ID3v2 tag) throws InvalidFileException {
 		if (mFileSelection.containsKey(file)) { //Mustn't add multiple copies of a file
 			Log.w(Constants.MAIN_TAG, "Tried to add file " + file.getName() + " that was already selected.");
 			return;
@@ -48,7 +50,7 @@ public class FileSelection {
 			mTagCloud.addEntry(file, tag);
 		} catch (NoTagAssociatedWithFileException e) {
 			Log.w(Constants.MAIN_TAG, "WARNING: Tried to add file " + file.getName() + " without a valid ID3Tag.");
-			addFile(file, new ID3v1());
+			addFile(file, new ID3v24Tag());
 		}
 		
 		List<File> parents = new ArrayList<File>();
@@ -58,6 +60,9 @@ public class FileSelection {
 			parent = parent.getParentFile();
 		}
 		mFileSelection.put(file, parents);
+		
+		setChanged();
+		notifyObservers();
 	}
 	
 	/**
@@ -68,6 +73,9 @@ public class FileSelection {
 		if (mFileSelection.containsKey(file)) {
 			mFileSelection.remove(file);
 			mTagCloud.removeEntry(file);
+			
+			setChanged();
+			notifyObservers();
 		}
 	}
 	
@@ -92,7 +100,7 @@ public class FileSelection {
 	 * Returns the files in this selection in a set.
 	 * @return - The Files
 	 */
-	public Set<File> getSelection() {
+	public Set<File> getFileSet() {
 		return mFileSelection.keySet();
 	}
 	
