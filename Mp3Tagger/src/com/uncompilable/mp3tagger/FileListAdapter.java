@@ -21,7 +21,6 @@ import android.widget.TextView;
  */
 public class FileListAdapter extends ArrayAdapter<File> {
 	private File[] mFiles;
-	private Context mContext;
 	private int mIndexPlaying;
 
 	public static final int NONE_PLAYING = -1;
@@ -29,7 +28,6 @@ public class FileListAdapter extends ArrayAdapter<File> {
 	public FileListAdapter(Context context, File[] files) {
 		super(context, R.layout.list_item, files);
 
-		mContext = context;
 		setDisplayedFiles(files);
 
 		mIndexPlaying = NONE_PLAYING;
@@ -40,7 +38,7 @@ public class FileListAdapter extends ArrayAdapter<File> {
 		View result = convertView;
 
 		if (convertView == null) {
-			LayoutInflater inflater = (LayoutInflater)this.mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			LayoutInflater inflater = (LayoutInflater)this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			result = inflater.inflate(R.layout.list_item, parent, false);
 		}
 

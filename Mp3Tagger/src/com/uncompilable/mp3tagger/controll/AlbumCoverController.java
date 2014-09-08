@@ -27,17 +27,23 @@ public class AlbumCoverController {
 	}
 
 
-	public Uri[] getAlbumImages(String title) {
+	public String[] getAlbumImages(String... searchTerms) {
 		URL url;
 		URLConnection connection;
-
-
+		
+		String searchTerm = searchTerms[0].replace(" ", "%20");
+		for (int i=1; i<searchTerms.length; i++) {
+			searchTerm.concat("%20" + searchTerms[0]);
+		}
+		String urlString = API_URL + searchTerm;
+		
 		try {
-			url = new URL(API_URL + title);
+			Log.d(Constants.MAIN_TAG, "Trying to connect to URL " + urlString);
+			url = new URL(urlString);
 			connection = url.openConnection();
 		} catch (IOException e) {
-			Log.e(Constants.MAIN_TAG, "ERROR: Could not connect to URL " + API_URL + title, e);
-			return new Uri[0];
+			Log.e(Constants.MAIN_TAG, "ERROR: Could not connect to URL " + urlString, e);
+			return new String[0];
 		}
 
 		String line;
@@ -52,22 +58,17 @@ public class AlbumCoverController {
 
 			JSONArray resultArray = json.getJSONObject("responseData").getJSONArray("results");
 
-			Uri[] result = new Uri[resultArray.length()];
+			String[] result = new String[resultArray.length()];
 			for (int i=0; i < resultArray.length(); i++) {
-				Uri.Builder uriBuilder = new Uri.Builder();
-				uriBuilder.path(resultArray.getJSONObject(i).getString("url"));
-				result[i] = uriBuilder.build();
-				Log.d(Constants.MAIN_TAG, result[i].getPath());
+				result[i] = resultArray.getJSONObject(i).getString("url");
+				Log.d(Constants.MAIN_TAG, result[i]);
 			}
+			return result;
 
 		} catch (IOException | JSONException e) {
 			Log.e(Constants.MAIN_TAG, "Error trying to read JSON file.", e);
 			try { reader.close(); } catch (IOException e1) {}
-			return new Uri[0];
+			return new String[0];
 		}
-
-
-
-		return null;
 	}
 }
