@@ -55,7 +55,10 @@ public class MainActivity extends ActionBarActivity implements TabListener {
 			@Override
 			public void onPageSelected(int index) {
 				actionBar.setSelectedNavigationItem(index);
-				if (index == 1) {
+				if (index == 0) {
+					((FileSelectionFragment)pagerAdapter.getItem(0)).refresh();
+				}
+				else if (index == 1) {
 					((TagEditFragment)pagerAdapter.getItem(1)).refresh();
 				}
 			}

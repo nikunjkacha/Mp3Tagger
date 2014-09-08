@@ -93,14 +93,16 @@ public class SelectionController {
 		} else if (n > 0 && file.isDirectory()) {
 			result.addAll(Arrays.asList(file.listFiles(mp3OrDirectoryFilter)));
 			List<File> toAdd = new ArrayList<File>();
+			List<File> toRemove = new ArrayList<File>();
 			
 			for (File subItem : result) {
 				if (subItem.isDirectory()) {
-					result.remove(subItem);
+					toRemove.add(subItem);
 					toAdd.addAll(scanDirectory(subItem, n-1));
 				}
 			}
 			
+			result.removeAll(toRemove);
 			result.addAll(toAdd);
 		}
 		return result;

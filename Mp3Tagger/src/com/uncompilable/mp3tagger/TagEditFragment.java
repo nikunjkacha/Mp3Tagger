@@ -22,7 +22,7 @@ import android.widget.NumberPicker;
 import android.widget.Spinner;
 
 public class TagEditFragment extends Fragment {
-	private FileListAdapter mAdapter;
+	private SimpleFileListAdapter mAdapter;
 	private MainActivity mMain;
 	
 	@Override
@@ -48,7 +48,7 @@ public class TagEditFragment extends Fragment {
 		super.onAttach(activity);
 		
 		this.mMain = (MainActivity) activity;
-		this.mAdapter = new FileListAdapter(mMain, new File[0]);
+		this.mAdapter = new SimpleFileListAdapter(mMain, new File[0]);
 		
 		mMain.getSelectionController().getSelection().addObserver(new Observer() {
 
