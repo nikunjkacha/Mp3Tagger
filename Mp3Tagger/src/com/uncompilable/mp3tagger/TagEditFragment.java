@@ -1,11 +1,16 @@
 package com.uncompilable.mp3tagger;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Observable;
 import java.util.Observer;
 
 import com.mpatric.mp3agic.ID3v1Genres;
+import com.mpatric.mp3agic.InvalidDataException;
+import com.mpatric.mp3agic.NotSupportedException;
+import com.mpatric.mp3agic.UnsupportedTagException;
+import com.uncompilable.mp3tagger.model.FrameValuePair;
 import com.uncompilable.mp3tagger.model.Id3Frame;
 import com.uncompilable.mp3tagger.model.TagCloud;
 import com.uncompilable.mp3tagger.utility.Constants;
@@ -23,6 +28,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -33,20 +39,37 @@ import android.widget.Spinner;
 public class TagEditFragment extends Fragment {
 	private SimpleFileListAdapter mAdapter;
 	private MainActivity mMain;
+	
+	private EditText mEtTitle;
+	private EditText mEtArtist;
+	private EditText mEtAlbum;
+	private EditText mEtComposer;
+	
+	private NumberPicker mNpTrack;
+	private Spinner mSpGenre;
+	
+	private CheckBox mCbTitle;
+	private CheckBox mCbArtist;
+	private CheckBox mCbAlbum;
+	private CheckBox mCbComposer;
+	private CheckBox mCbTrack;
+	private CheckBox mCbGenre;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View root = inflater.inflate(R.layout.tagedit_fragment, container, false);
 
-		EditText etTitle 	= (EditText) root.findViewById(R.id.etTitle   );
-		EditText etArtist  	= (EditText) root.findViewById(R.id.etArtist  );
-		EditText etAlbum    = (EditText) root.findViewById(R.id.etAlbum   );
-		EditText etComposer = (EditText) root.findViewById(R.id.etComposer);
+		mEtTitle 	= (EditText) root.findViewById(R.id.etTitle   );
+		mEtArtist  	= (EditText) root.findViewById(R.id.etArtist  );
+		mEtAlbum    = (EditText) root.findViewById(R.id.etAlbum   );
+		mEtComposer = (EditText) root.findViewById(R.id.etComposer);
 
-		CheckBox cbTitle 	= (CheckBox) root.findViewById(R.id.cbTitle   );
-		CheckBox cbArtist  	= (CheckBox) root.findViewById(R.id.cbArtist  );
-		CheckBox cbAlbum    = (CheckBox) root.findViewById(R.id.cbAlbum   );
-		CheckBox cbComposer = (CheckBox) root.findViewById(R.id.cbComposer);
+		mCbTitle 	= (CheckBox) root.findViewById(R.id.cbTitle   );
+		mCbArtist  	= (CheckBox) root.findViewById(R.id.cbArtist  );
+		mCbAlbum    = (CheckBox) root.findViewById(R.id.cbAlbum   );
+		mCbComposer = (CheckBox) root.findViewById(R.id.cbComposer);
+		mCbTrack    = (CheckBox) root.findViewById(R.id.cbTracknumber);
+		mCbGenre    = (CheckBox) root.findViewById(R.id.cbGenre);
 
 		//Set Listeners for all items
 		ItemListener itemListener;
@@ -54,57 +77,55 @@ public class TagEditFragment extends Fragment {
 		CheckboxListener checkListener = new CheckboxListener(cloud, Id3Frame.TITLE);
 		
 		itemListener = new ItemListener(cloud, Id3Frame.TITLE); 
-		etTitle.addTextChangedListener(itemListener);
-		cbTitle.setOnClickListener(checkListener);
+		mEtTitle.addTextChangedListener(itemListener);
+		mCbTitle.setOnClickListener(checkListener);
 
 		itemListener = new ItemListener(cloud, Id3Frame.ARTIST);   
-		etArtist.addTextChangedListener(itemListener);
-		cbArtist.setOnClickListener(checkListener);
+		mEtArtist.addTextChangedListener(itemListener);
+		mCbArtist.setOnClickListener(checkListener);
 
 		itemListener = new ItemListener(cloud, Id3Frame.ALBUM_TITLE);    
-		etAlbum.addTextChangedListener(itemListener);
-		cbAlbum.setOnClickListener(checkListener);
+		mEtAlbum.addTextChangedListener(itemListener);
+		mCbAlbum.setOnClickListener(checkListener);
 
 		itemListener = new ItemListener(cloud, Id3Frame.COMPOSER); 
-		etComposer.addTextChangedListener(itemListener);
-		cbComposer.setOnClickListener(checkListener);
+		mEtComposer.addTextChangedListener(itemListener);
+		mCbComposer.setOnClickListener(checkListener);
 
-		NumberPicker npTrackNumber = (NumberPicker) root.findViewById(R.id.npTracknumber);
-		npTrackNumber.setMinValue(0);
-		npTrackNumber.setMaxValue(512);
+		mNpTrack= (NumberPicker) root.findViewById(R.id.npTracknumber);
+		mNpTrack.setMinValue(0);
+		mNpTrack.setMaxValue(512);
 		
-		final CheckBox cbTrack = (CheckBox) root.findViewById(R.id.cbTracknumber);
 		final TagCloud tags = mMain.getSelectionController().getSelection().getTagCloud();
 		
-		cbTrack.setOnClickListener(checkListener);
-		npTrackNumber.setOnValueChangedListener(new OnValueChangeListener() {
+		mCbTrack.setOnClickListener(checkListener);
+		mNpTrack.setOnValueChangedListener(new OnValueChangeListener() {
 
 			@Override
 			public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-				cbTrack.setChecked(true);
 				tags.setFrameSelected(Id3Frame.TRACK_NUMBER);
+				updateCheckboxes();
 			}
 			
 		});
 
-		Spinner spGenres = (Spinner) root.findViewById(R.id.spGenre);
-		spGenres.setAdapter(new ArrayAdapter<String>(mMain, R.layout.simple_textview_item, ID3v1Genres.GENRES));
-		final CheckBox cbGenres = (CheckBox) root.findViewById(R.id.cbGenre);
+		mSpGenre = (Spinner) root.findViewById(R.id.spGenre);
+		mSpGenre.setAdapter(new ArrayAdapter<String>(mMain, R.layout.simple_textview_item, ID3v1Genres.GENRES));
 		
-		cbGenres.setOnClickListener(checkListener);
+		mCbGenre.setOnClickListener(checkListener);
 
-		spGenres.setOnItemSelectedListener(new OnItemSelectedListener() {
+		mSpGenre.setOnItemSelectedListener(new OnItemSelectedListener() {
 
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
 				tags.setFrameSelected(Id3Frame.GENRE);
-				cbGenres.setChecked(true);
+				updateCheckboxes();
 			}
 
 			@Override
 			public void onNothingSelected(AdapterView<?> parent) {
 				tags.setFrameUnselected(Id3Frame.GENRE);
-				cbGenres.setChecked(false);
+				updateCheckboxes();
 			}
 
 		});
@@ -112,6 +133,16 @@ public class TagEditFragment extends Fragment {
 		refresh();
 		ListView lvSelection = (ListView) root.findViewById(R.id.lvFiles);
 		lvSelection.setAdapter(mAdapter);
+		
+		Button btnSave = (Button) root.findViewById(R.id.btnSaveTags);
+		btnSave.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View source) {
+				saveTags();
+			}
+			
+		});
 
 		return root;
 	}
@@ -169,7 +200,7 @@ public class TagEditFragment extends Fragment {
 		if (mMain.getSelectionController().getSelection().getFileSet().size() == 1) {
 			npTracknumber.setEnabled(true);
 			int track = 0;
-			if (tags.getValues(Id3Frame.TITLE) != null) {
+			if (tags.getValues(Id3Frame.TRACK_NUMBER) != null && tags.getValues(Id3Frame.TRACK_NUMBER).size() > 0) {
 				String strTrack = (String)tags.getValues(Id3Frame.TRACK_NUMBER).toArray()[0];
 				track = Integer.parseInt(strTrack.split("/")[0]);
 			}
@@ -194,23 +225,37 @@ public class TagEditFragment extends Fragment {
 	}
 	
 	private void updateCheckboxes() {
-		CheckBox cbTitle 	= (CheckBox) getView().findViewById(R.id.cbTitle   	  );
-		CheckBox cbArtist  	= (CheckBox) getView().findViewById(R.id.cbArtist  	  );
-		CheckBox cbAlbum    = (CheckBox) getView().findViewById(R.id.cbAlbum   	  );
-		CheckBox cbComposer = (CheckBox) getView().findViewById(R.id.cbComposer	  );
-		CheckBox cbTrack    = (CheckBox) getView().findViewById(R.id.cbTracknumber);
-		CheckBox cbGenre 	= (CheckBox) getView().findViewById(R.id.cbGenre	  );
-		
 		//Check the checkboxes, if the frame is currently selected by the TagMap
 		TagCloud tags = mMain.getSelectionController().getSelection().getTagCloud();
 		
-		cbTitle	  .setChecked(tags.isSelected(Id3Frame.TITLE	   ));
-		cbArtist  .setChecked(tags.isSelected(Id3Frame.ARTIST	   ));
-		cbAlbum   .setChecked(tags.isSelected(Id3Frame.ALBUM_TITLE ));
-		cbComposer.setChecked(tags.isSelected(Id3Frame.COMPOSER	   ));
-		cbTrack   .setChecked(tags.isSelected(Id3Frame.TRACK_NUMBER));
-		cbGenre   .setChecked(tags.isSelected(Id3Frame.GENRE       ));
+		mCbTitle   .setChecked(tags.isSelected(Id3Frame.TITLE	   ));
+		mCbArtist  .setChecked(tags.isSelected(Id3Frame.ARTIST	   	));
+		mCbAlbum   .setChecked(tags.isSelected(Id3Frame.ALBUM_TITLE ));
+		mCbComposer.setChecked(tags.isSelected(Id3Frame.COMPOSER	));
+		mCbTrack   .setChecked(tags.isSelected(Id3Frame.TRACK_NUMBER));
+		mCbGenre   .setChecked(tags.isSelected(Id3Frame.GENRE       ));
 	}
+	
+	private void saveTags() {
+		TagCloud tags = mMain.getSelectionController().getSelection().getTagCloud();
+		
+		tags.setValue(new FrameValuePair(Id3Frame.TITLE, mEtTitle.getText().toString()));
+		tags.setValue(new FrameValuePair(Id3Frame.ARTIST, mEtArtist.getText().toString()));
+		tags.setValue(new FrameValuePair(Id3Frame.ALBUM_TITLE, mEtAlbum.getText().toString()));
+		tags.setValue(new FrameValuePair(Id3Frame.COMPOSER, mEtComposer.getText().toString()));
+		
+		tags.setValue(new FrameValuePair(Id3Frame.TRACK_NUMBER, mNpTrack.getValue() + ""));
+		tags.setValue(new FrameValuePair(Id3Frame.GENRE, (String) mSpGenre.getSelectedItem()));
+		
+		try {
+			mMain.getSelectionController().getIOController().writeTags();
+		} catch (UnsupportedTagException | InvalidDataException
+				| NotSupportedException | IOException e) {
+			Log.e(Constants.MAIN_TAG, "ERROR: Could not write tags to file", e);
+		}
+	}
+	
+	
 
 	private class CheckboxListener implements OnClickListener {
 		private final TagCloud tagCloud;

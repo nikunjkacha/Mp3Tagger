@@ -1,7 +1,10 @@
 package com.uncompilable.mp3tagger.controll;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.RandomAccessFile;
 
 import android.media.Image;
 
@@ -27,10 +30,10 @@ public class IOController {
 	 */
 	public IOController(SelectionController selectionController) {
 		super();
-		
+
 		this.mSelectionController = selectionController;
 	}
-	
+
 	/**
 	 * Reads a file and returns the ID3Tag of this file
 	 * @param file - The file to be read
@@ -46,7 +49,7 @@ public class IOController {
 		Mp3File mp3 = new Mp3File(file.getAbsolutePath());
 		return mp3.getId3v2Tag();
 	}
-	
+
 	/**
 	 * Writes changes in the TagCloud into the files
 	 * @throws IOException
@@ -56,15 +59,23 @@ public class IOController {
 	 * @throws TagException
 	 */
 	public void writeTags() throws IOException, UnsupportedTagException, InvalidDataException, NotSupportedException {
+		mSelectionController.getSelection().getTagCloud().writeLocalChanges();
 		
 		for (File file : mSelectionController.getSelection().getFileSet()) {
+			String path = file.getCanonicalPath();
 			Mp3File mp3 = new Mp3File(file.getAbsolutePath());
-			mp3.setId3v2Tag(mSelectionController.getSelection().getTagCloud().getTagMap().get(file));
-			mp3.save(file.getName());
+			ID3v2 tag = mSelectionController.getSelection().getTagCloud().getTagMap().get(file);
+			mp3.setId3v2Tag(tag);
+			mp3.save(path + "_temp.mp3");
+			if (file.delete()) {
+				new File(path + "_temp.mp3").renameTo(new File(path));
+			} else {
+				new File(path + "_temp.mp3").delete();
+			}
 		}
 	}
-	
+
 	public void writeAlbumCover(Image cover) {
-		
+
 	}
 }
