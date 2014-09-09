@@ -1,8 +1,10 @@
 package com.uncompilable.mp3tagger;
 
 import java.io.File;
+
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 
 /**
@@ -23,6 +25,7 @@ public class SimpleFileListAdapter extends AbstractFileListAdapter {
 		View result = super.getView(position, convertView, parent);
 
 		final ImageView ivIcon = (ImageView) result.findViewById(R.id.ivIcon);
+		((CheckBox)result.findViewById(R.id.cbSelected)).setVisibility(View.INVISIBLE);
 
 		if (mFiles[position].equals(AbstractFileListAdapter.sPlaying)) {
 			ivIcon.setImageResource(R.drawable.ic_playing);

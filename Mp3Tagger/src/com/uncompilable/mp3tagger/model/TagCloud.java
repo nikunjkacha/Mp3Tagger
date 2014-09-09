@@ -48,9 +48,6 @@ public class TagCloud {
 		Multiset<String> newValues = TreeMultiset.<String>create();
 		newValues.add(value.getValue());
 		mFrameValueMap.put(value.getFrame(), newValues);
-		
-		//Mark changed frame as selected
-		mSelectedFields |=value.getFrame().getSelectionValue();
 	}
 	
 	/**
@@ -59,8 +56,35 @@ public class TagCloud {
 	 * @return - The associated values. If there are no associated values: returns an empty Collection.
 	 */
 	public Collection<String> getValues(Id3Frame frame) {
-		Collection<String> values = mFrameValueMap.get(frame);
+		Collection<String> values = mFrameValueMap.get(frame).elementSet();
 		return values == null? new ArrayList<String>() : values;
+	}
+	
+	/**
+	 * Sets an Id3Frame as selected. 
+	 * WriteLocalChanges() will now write this frame.
+	 * @param frame - The Frame to select
+	 */
+	public void setFrameSelected(Id3Frame frame) {
+		mSelectedFields |= frame.getSelectionValue();
+	}
+	
+	/**
+	 * Sets an Id3Frame as unselected.
+	 * WriteLocalChanges() will now not write this frame.
+	 * @param frame - The Frame to unselect
+	 */
+	public void setFrameUnselected(Id3Frame frame) {
+		mSelectedFields &= (0xFFFF - frame.getSelectionValue());
+	}
+	
+	/**
+	 * Returns true if the specified frame is currently selected
+	 * @param frame
+	 * @return
+	 */
+	public boolean isSelected(Id3Frame frame) {
+		return (mSelectedFields & frame.getSelectionValue()) != 0;
 	}
 
 	/**
