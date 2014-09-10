@@ -3,7 +3,6 @@ package com.uncompilable.mp3tagger;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -25,12 +24,6 @@ public class AlbumGridAdapter extends ArrayAdapter<String> {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		View result = convertView;
-		
-		if (convertView == null) {
-			LayoutInflater inflater = (LayoutInflater)this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			result = inflater.inflate(R.layout.list_item, parent, false);
-		}
 		ImageView ivCover = new ImageView(this.getContext());
 		ImageLoader.getInstance().displayImage(mImages[position], ivCover);
 		return ivCover;

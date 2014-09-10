@@ -1,7 +1,11 @@
 package com.uncompilable.mp3tagger;
 
+import java.util.Observable;
+import java.util.Observer;
+
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.uncompilable.mp3tagger.model.FileSelection;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,36 +16,57 @@ import android.view.ViewGroup;
 import android.widget.GridView;
 
 public class AlbumCoverFragment extends Fragment {
+	private MainActivity mMain;
+	private AsyncTask<String, String, String> mFetchTask;
+	private AlbumGridAdapter mAdapter;
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View root = inflater.inflate(R.layout.albumcover_fragment, container, false);
 
-		final MainActivity main = (MainActivity)this.getActivity();
+		mMain = (MainActivity)this.getActivity();
 
-		final AlbumGridAdapter adapter = new AlbumGridAdapter(main);
+		mAdapter = new AlbumGridAdapter(mMain);
 		
-		new AsyncTask<AlbumGridAdapter, String, String>() {
+		final FileSelection fileSelection = mMain.getSelectionController().getSelection();
+		fileSelection.addObserver(new Observer() {
 
 			@Override
-			protected String doInBackground(AlbumGridAdapter... adapter) {
-				adapter[0].setItems(main.getSelectionController().getAlbumCoverController().getAlbumImages("Blood Money Tom Waits"));
-				
-				return null;
+			public void update(Observable source, Object data) {
+				if (mFetchTask != null) 
+					mFetchTask.cancel(true);
+
+				mFetchTask = new FetchTask();
+				mFetchTask.execute("");
 			}
 			
-			@Override
-			protected void onPostExecute(String result) {
-				adapter.notifyDataSetChanged();
-			}
-			
-		}.execute(adapter);
+		});
+		mFetchTask = new FetchTask();
+		mFetchTask.execute("");
 		
-		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(main).build();
+		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(mMain).build();
 		ImageLoader.getInstance().init(config);
 		
 		GridView gvCoverGrid = (GridView) root.findViewById(R.id.gvCoverGrid);
-		gvCoverGrid.setAdapter(adapter);
+		gvCoverGrid.setAdapter(mAdapter);
 		
 		return root;
+	}
+	
+	
+	private class FetchTask extends AsyncTask<String, String, String> {
+
+		@Override
+		protected String doInBackground(String... mes) {
+			mAdapter.setItems(mMain.getSelectionController().getAlbumCoverController().getAlbumImages());
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(String result) {
+			mAdapter.notifyDataSetChanged();
+		}
+		
+		
 	}
 }
