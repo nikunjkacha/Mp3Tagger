@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.uncompilable.mp3tagger.utility.Constants;
 
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
@@ -43,7 +44,7 @@ public class BrowsableFileListAdapter extends AbstractFileListAdapter {
 		} else {
 			ivIcon.setImageResource(R.drawable.ic_mp3file);
 		}
-		
+
 		boolean playable = PreferenceManager.getDefaultSharedPreferences(mMain).getBoolean(Constants.PREF_KEY_PLAYABLE, true);
 		result.setOnClickListener(new AbstractFileListAdapter.ItemClickListener(mFiles[position], this, playable) {
 			@Override
@@ -64,14 +65,22 @@ public class BrowsableFileListAdapter extends AbstractFileListAdapter {
 
 		return result;
 	}
-	
+
 	public void setRoot(File newRoot) {
-		this.mRootfile = newRoot;
+		try {
+			this.mRootfile = newRoot.getCanonicalFile();
+		} catch (IOException e) {
+			this.mRootfile = newRoot.getAbsoluteFile();
+		}
 	}
 
 	private static File[] getFileList(File dir) {
+		File rootDir = Environment.getRootDirectory();
 		List<File> subDir = new ArrayList<File>(Arrays.asList(dir.listFiles(MP3_DIR_FILTER)));
-		subDir.add(0, new File(dir.getAbsolutePath() + "/.."));
+		if (!rootDir.equals(dir) &&
+				dir.getParentFile() != null) {
+			subDir.add(0, new File(dir.getAbsolutePath() + "/.."));
+		}
 		return subDir.toArray(new File[subDir.size()]);
 	}
 

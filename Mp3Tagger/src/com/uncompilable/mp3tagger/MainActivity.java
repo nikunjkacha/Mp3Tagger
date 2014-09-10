@@ -10,8 +10,8 @@ import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -75,16 +75,8 @@ public class MainActivity extends ActionBarActivity implements TabListener {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
-			getFragmentManager().beginTransaction()
-            .replace(android.R.id.content, new PreferenceFragment() {
-            	@Override
-            	public void onCreate(Bundle savedInstanceState) {
-            		super.onCreate(savedInstanceState);
-            		addPreferencesFromResource(R.xml.preferences);
-            		
-            	}
-            })
-            .commit();
+			Intent settingsIntent = new Intent(this, SettingsActivity.class);
+			startActivity(settingsIntent);
 			return true;
 		}
 		return super.onOptionsItemSelected(item);

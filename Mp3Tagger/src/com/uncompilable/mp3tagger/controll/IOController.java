@@ -1,11 +1,7 @@
 package com.uncompilable.mp3tagger.controll;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.RandomAccessFile;
-
 import android.media.Image;
 
 import com.mpatric.mp3agic.ID3v2;
