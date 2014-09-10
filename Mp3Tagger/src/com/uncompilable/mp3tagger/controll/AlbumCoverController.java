@@ -18,7 +18,7 @@ import android.util.Log;
 public class AlbumCoverController {
 	private SelectionController mSelectionController;
 
-	private static final String API_URL = "https://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=";
+	private static final String API_URL = "https://ajax.googleapis.com/ajax/services/search/images?v=1.0&rsz=8&q=";
 
 	public AlbumCoverController(SelectionController selectionController) {
 		super();
@@ -45,7 +45,7 @@ public class AlbumCoverController {
 			
 			// Add artist to search string, if there is only one
 			if (artists.length == 1) {
-				searchTerm.concat("%20".concat(artists[0].replace(" ", "%20")));
+				searchTerm = searchTerm.concat("%20".concat(artists[0].replace(" ", "%20")));
 			}
 			
 			String urlString = API_URL + searchTerm;

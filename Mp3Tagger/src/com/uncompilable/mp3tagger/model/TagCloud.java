@@ -21,7 +21,7 @@ import com.uncompilable.mp3tagger.error.NoTagAssociatedWithFileException;
  */
 public class TagCloud {
 	private Map<File, ID3v2> mFileTagMap;
-	private Map<Id3Frame, Multiset<String>> mFrameValueMap;
+	private final Map<Id3Frame, Multiset<String>> mFrameValueMap;
 	
 	private int mSelectedFields;
 

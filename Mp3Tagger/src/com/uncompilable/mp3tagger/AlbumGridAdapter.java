@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
+import android.widget.GridView;
 
 
 public class AlbumGridAdapter extends ArrayAdapter<String> {
@@ -16,7 +18,7 @@ public class AlbumGridAdapter extends ArrayAdapter<String> {
 		super(context, R.layout.covergrid_item, objects);
 		mImages = objects;
 	}
-	
+
 	public AlbumGridAdapter(Context context) {
 		super(context, R.layout.covergrid_item);
 		mImages = new String[0];
@@ -24,18 +26,24 @@ public class AlbumGridAdapter extends ArrayAdapter<String> {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		ImageView ivCover = new ImageView(this.getContext());
+		ImageView ivCover = (ImageView) convertView;
+		if (convertView == null) {
+			 ivCover = new ImageView(this.getContext());
+			 ivCover.setScaleType(ScaleType.CENTER_CROP);
+			 ivCover.setPadding(10, 10, 10, 10);
+			 ivCover.setLayoutParams(new GridView.LayoutParams(290,290));
+		}
 		ImageLoader.getInstance().displayImage(mImages[position], ivCover);
 		return ivCover;
 	}
-	
+
 	public void setItems(String[] items) {
 		this.mImages = items;
 	}
-	
+
 	@Override
 	public int getCount() {
 		return mImages == null? 0 : mImages.length;
 	}
-	
+
 }
