@@ -195,7 +195,6 @@ public class TagEditFragment extends Fragment {
 		currentFrame = tags.getValues(Id3Frame.ALBUM_TITLE); fillWidget(currentFrame, etAlbum	);
 		currentFrame = tags.getValues(Id3Frame.COMPOSER	  ); fillWidget(currentFrame, etComposer);
 
-		updateCheckboxes();
 		
 		if (mMain.getSelectionController().getSelection().getFileSet().size() == 1) {
 			npTracknumber.setEnabled(true);
@@ -211,10 +210,15 @@ public class TagEditFragment extends Fragment {
 
 		currentFrame = tags.getValues(Id3Frame.GENRE);
 		int index = 0;
-		if (tags.getValues(Id3Frame.GENRE).size() > 0) 
+		if (tags.getValues(Id3Frame.GENRE).size() > 0)  {
 			index = ID3v1Genres.matchGenreDescription((String)tags.getValues(Id3Frame.GENRE).toArray()[0]);
+		}
+		if (tags.getValues(Id3Frame.GENRE).size() > 1) {
+			tags.setFrameUnselected(Id3Frame.GENRE);
+		}
 		if (index < spGenre.getAdapter().getCount()) spGenre.setSelection(index < 0? 0 : index);
 
+		updateCheckboxes();
 	}
 
 	private void fillWidget(Collection<String> values, EditText widget) {
