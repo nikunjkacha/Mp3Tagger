@@ -2,9 +2,12 @@ package com.uncompilable.mp3tagger.controll;
 
 import java.io.File;
 import java.io.IOException;
+
 import android.media.Image;
 
+import com.mpatric.mp3agic.ID3v1;
 import com.mpatric.mp3agic.ID3v2;
+import com.mpatric.mp3agic.ID3v24Tag;
 import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;
 import com.mpatric.mp3agic.NotSupportedException;
@@ -43,7 +46,23 @@ public class IOController {
 	 */
 	public ID3v2 readFile(File file) throws IOException, NoTagAssociatedWithFileException, UnsupportedTagException, InvalidDataException {
 		Mp3File mp3 = new Mp3File(file.getAbsolutePath());
-		return mp3.getId3v2Tag();
+		if (mp3.hasId3v2Tag()) {
+			return mp3.getId3v2Tag();
+		} else if (mp3.hasId3v1Tag()) {
+			ID3v1 fileTag = mp3.getId3v1Tag();
+			ID3v2 resultTag = new ID3v24Tag();
+			
+			resultTag.setTitle(fileTag.getTitle());
+			resultTag.setArtist(fileTag.getArtist());
+			resultTag.setAlbum(fileTag.getAlbum());
+			resultTag.setTrack(fileTag.getTrack());
+			resultTag.setGenre(fileTag.getGenre());
+			resultTag.setGenreDescription(fileTag.getGenreDescription());
+			
+			return resultTag;
+		} else {
+			return new ID3v24Tag();
+		}
 	}
 
 	/**
@@ -56,7 +75,7 @@ public class IOController {
 	 */
 	public void writeTags() throws IOException, UnsupportedTagException, InvalidDataException, NotSupportedException {
 		mSelectionController.getSelection().getTagCloud().writeLocalChanges();
-		
+
 		for (File file : mSelectionController.getSelection().getFileSet()) {
 			String path = file.getCanonicalPath();
 			Mp3File mp3 = new Mp3File(file.getAbsolutePath());

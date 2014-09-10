@@ -23,8 +23,13 @@ import android.view.MenuItem;
  *
  */
 public class MainActivity extends ActionBarActivity implements TabListener {
-	private ViewPager pager;
+	private ViewPager mPager;
 	private SelectionController mSelectionController;
+	private CustomFragmentPagerAdapter mPagerAdapter;
+	
+	protected static final int TAB_SELECTION = 0;
+	protected static final int TAB_EDIT = 1;
+	protected static final int TAB_COVER = 2;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -40,10 +45,10 @@ public class MainActivity extends ActionBarActivity implements TabListener {
 		actionBar.addTab(actionBar.newTab().setText("Edit Tags").setTabListener(this));
 		actionBar.addTab(actionBar.newTab().setText("Album Covers").setTabListener(this));
 		
-		final CustomFragmentPagerAdapter pagerAdapter = new CustomFragmentPagerAdapter(getSupportFragmentManager());
-		pager = (ViewPager) findViewById(R.id.pager);
-		pager.setAdapter(pagerAdapter);
-		pager.setOnPageChangeListener(new OnPageChangeListener() {
+		mPagerAdapter = new CustomFragmentPagerAdapter(getSupportFragmentManager());
+		mPager = (ViewPager) findViewById(R.id.pager);
+		mPager.setAdapter(mPagerAdapter);
+		mPager.setOnPageChangeListener(new OnPageChangeListener() {
 			@Override
 			public void onPageScrollStateChanged(int arg0) {
 			}
@@ -55,16 +60,31 @@ public class MainActivity extends ActionBarActivity implements TabListener {
 			@Override
 			public void onPageSelected(int index) {
 				actionBar.setSelectedNavigationItem(index);
-				if (index == 0) {
-					((FileSelectionFragment)pagerAdapter.getItem(0)).refresh();
+				if (index == TAB_SELECTION) {
+					((FileSelectionFragment)mPagerAdapter.getItem(0)).refresh();
 				}
-				else if (index == 1) {
-					((TagEditFragment)pagerAdapter.getItem(1)).refresh();
+				else if (index == TAB_EDIT) {
+					((TagEditFragment)mPagerAdapter.getItem(1)).refresh();
 				}
 			}
 		});
 	}
 
+	protected void switchTab(int tab) {
+		if (tab == TAB_SELECTION) {
+			mPager.setCurrentItem(tab);
+			this.getActionBar().setSelectedNavigationItem(tab);
+			((FileSelectionFragment)mPagerAdapter.getItem(tab)).refresh();
+		} else if (tab == TAB_EDIT) {
+			mPager.setCurrentItem(tab);
+			this.getActionBar().setSelectedNavigationItem(tab);
+			((TagEditFragment)mPagerAdapter.getItem(tab)).refresh();
+		} else if (tab == TAB_COVER) {
+			mPager.setCurrentItem(tab);
+			this.getActionBar().setSelectedNavigationItem(tab);
+		}
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
@@ -92,7 +112,7 @@ public class MainActivity extends ActionBarActivity implements TabListener {
 
 	@Override
 	public void onTabSelected(Tab tab, FragmentTransaction transaction) {
-		if (pager != null) pager.setCurrentItem(tab.getPosition());
+		if (mPager != null) mPager.setCurrentItem(tab.getPosition());
 	}
 
 	@Override

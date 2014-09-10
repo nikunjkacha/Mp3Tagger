@@ -20,8 +20,9 @@ import com.uncompilable.mp3tagger.error.NoTagAssociatedWithFileException;
  *
  */
 public class TagCloud {
-	private Map<File, ID3v2> mFileTagMap;
+	private final Map<File, ID3v2> mFileTagMap;
 	private final Map<Id3Frame, Multiset<String>> mFrameValueMap;
+	private File mCover;
 	
 	private int mSelectedFields;
 
@@ -99,6 +100,7 @@ public class TagCloud {
 	 */
 	protected void addEntry(File file, ID3v2 tag) throws InvalidFileException, NoTagAssociatedWithFileException {
 		if (file == null) throw new InvalidFileException();
+		if (tag == null) throw new NoTagAssociatedWithFileException();
 		if (mFileTagMap.containsKey(file)) removeEntry(file);
 		mFileTagMap.put(file, tag);
 		
@@ -166,5 +168,13 @@ public class TagCloud {
 	
 	private boolean validValue(String value) {
 		return value != null && !value.isEmpty();
+	}
+
+	public File getCoverFile() {
+		return mCover;
+	}
+
+	public void setCoverFile(File cover) {
+		this.mCover = cover;
 	}
 }

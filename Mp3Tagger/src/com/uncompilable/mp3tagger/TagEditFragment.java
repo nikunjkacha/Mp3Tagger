@@ -16,6 +16,8 @@ import com.uncompilable.mp3tagger.model.TagCloud;
 import com.uncompilable.mp3tagger.utility.Constants;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -31,6 +33,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.NumberPicker.OnValueChangeListener;
@@ -39,21 +42,25 @@ import android.widget.Spinner;
 public class TagEditFragment extends Fragment {
 	private SimpleFileListAdapter mAdapter;
 	private MainActivity mMain;
-	
+
 	private EditText mEtTitle;
 	private EditText mEtArtist;
 	private EditText mEtAlbum;
 	private EditText mEtComposer;
-	
+
 	private NumberPicker mNpTrack;
 	private Spinner mSpGenre;
-	
+
 	private CheckBox mCbTitle;
 	private CheckBox mCbArtist;
 	private CheckBox mCbAlbum;
 	private CheckBox mCbComposer;
 	private CheckBox mCbTrack;
 	private CheckBox mCbGenre;
+
+	private ImageButton mBtnCover;
+
+	private int mCoverWidth, mCoverHeight;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -75,7 +82,7 @@ public class TagEditFragment extends Fragment {
 		ItemListener itemListener;
 		TagCloud cloud = mMain.getSelectionController().getSelection().getTagCloud();
 		CheckboxListener checkListener = new CheckboxListener(cloud, Id3Frame.TITLE);
-		
+
 		itemListener = new ItemListener(cloud, Id3Frame.TITLE); 
 		mEtTitle.addTextChangedListener(itemListener);
 		mCbTitle.setOnClickListener(checkListener);
@@ -95,9 +102,9 @@ public class TagEditFragment extends Fragment {
 		mNpTrack= (NumberPicker) root.findViewById(R.id.npTracknumber);
 		mNpTrack.setMinValue(0);
 		mNpTrack.setMaxValue(512);
-		
+
 		final TagCloud tags = mMain.getSelectionController().getSelection().getTagCloud();
-		
+
 		mCbTrack.setOnClickListener(checkListener);
 		mNpTrack.setOnValueChangedListener(new OnValueChangeListener() {
 
@@ -106,12 +113,12 @@ public class TagEditFragment extends Fragment {
 				tags.setFrameSelected(Id3Frame.TRACK_NUMBER);
 				updateCheckboxes();
 			}
-			
+
 		});
 
 		mSpGenre = (Spinner) root.findViewById(R.id.spGenre);
 		mSpGenre.setAdapter(new ArrayAdapter<String>(mMain, R.layout.simple_textview_item, ID3v1Genres.GENRES));
-		
+
 		mCbGenre.setOnClickListener(checkListener);
 
 		mSpGenre.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -130,10 +137,22 @@ public class TagEditFragment extends Fragment {
 
 		});
 
+
 		refresh();
 		ListView lvSelection = (ListView) root.findViewById(R.id.lvFiles);
 		lvSelection.setAdapter(mAdapter);
-		
+
+		mBtnCover = (ImageButton) root.findViewById(R.id.btnEditCover);
+
+		mBtnCover.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View source) {
+				mMain.switchTab(MainActivity.TAB_COVER);
+			}
+
+		});
+
 		Button btnSave = (Button) root.findViewById(R.id.btnSaveTags);
 		btnSave.setOnClickListener(new OnClickListener() {
 
@@ -141,7 +160,7 @@ public class TagEditFragment extends Fragment {
 			public void onClick(View source) {
 				saveTags();
 			}
-			
+
 		});
 
 		return root;
@@ -195,7 +214,7 @@ public class TagEditFragment extends Fragment {
 		currentFrame = tags.getValues(Id3Frame.ALBUM_TITLE); fillWidget(currentFrame, etAlbum	);
 		currentFrame = tags.getValues(Id3Frame.COMPOSER	  ); fillWidget(currentFrame, etComposer);
 
-		
+
 		if (mMain.getSelectionController().getSelection().getFileSet().size() == 1) {
 			npTracknumber.setEnabled(true);
 			int track = 0;
@@ -219,6 +238,21 @@ public class TagEditFragment extends Fragment {
 		if (index < spGenre.getAdapter().getCount()) spGenre.setSelection(index < 0? 0 : index);
 
 		updateCheckboxes();
+		if (mCoverWidth <= 0) {
+			mCoverWidth = mBtnCover.getWidth(); 
+		}
+
+		if (mCoverHeight <= 0) {
+			mCoverHeight = mBtnCover.getHeight();
+		}
+
+		File coverFile = mMain.getSelectionController().getSelection().getTagCloud().getCoverFile();
+		if (coverFile != null) {
+			Bitmap coverBitmap = BitmapFactory.decodeFile(coverFile.getAbsolutePath());
+			mBtnCover.setImageBitmap(Bitmap.createScaledBitmap(coverBitmap, mCoverWidth, mCoverHeight, false));
+		} else {
+			mBtnCover.setImageResource(R.drawable.ic_mp3file);
+		}
 	}
 
 	private void fillWidget(Collection<String> values, EditText widget) {
@@ -227,11 +261,11 @@ public class TagEditFragment extends Fragment {
 		else if (size > 1) widget.setText(R.string.multipleValues);
 		else widget.setText((String)values.toArray()[0]); 
 	}
-	
+
 	private void updateCheckboxes() {
 		//Check the checkboxes, if the frame is currently selected by the TagMap
 		TagCloud tags = mMain.getSelectionController().getSelection().getTagCloud();
-		
+
 		mCbTitle   .setChecked(tags.isSelected(Id3Frame.TITLE	   ));
 		mCbArtist  .setChecked(tags.isSelected(Id3Frame.ARTIST	   	));
 		mCbAlbum   .setChecked(tags.isSelected(Id3Frame.ALBUM_TITLE ));
@@ -239,18 +273,18 @@ public class TagEditFragment extends Fragment {
 		mCbTrack   .setChecked(tags.isSelected(Id3Frame.TRACK_NUMBER));
 		mCbGenre   .setChecked(tags.isSelected(Id3Frame.GENRE       ));
 	}
-	
+
 	private void saveTags() {
 		TagCloud tags = mMain.getSelectionController().getSelection().getTagCloud();
-		
+
 		tags.setValue(new FrameValuePair(Id3Frame.TITLE, mEtTitle.getText().toString()));
 		tags.setValue(new FrameValuePair(Id3Frame.ARTIST, mEtArtist.getText().toString()));
 		tags.setValue(new FrameValuePair(Id3Frame.ALBUM_TITLE, mEtAlbum.getText().toString()));
 		tags.setValue(new FrameValuePair(Id3Frame.COMPOSER, mEtComposer.getText().toString()));
-		
+
 		tags.setValue(new FrameValuePair(Id3Frame.TRACK_NUMBER, mNpTrack.getValue() + ""));
 		tags.setValue(new FrameValuePair(Id3Frame.GENRE, (String) mSpGenre.getSelectedItem()));
-		
+
 		try {
 			mMain.getSelectionController().getIOController().writeTags();
 		} catch (UnsupportedTagException | InvalidDataException
@@ -258,13 +292,13 @@ public class TagEditFragment extends Fragment {
 			Log.e(Constants.MAIN_TAG, "ERROR: Could not write tags to file", e);
 		}
 	}
-	
-	
+
+
 
 	private class CheckboxListener implements OnClickListener {
 		private final TagCloud tagCloud;
 		private final Id3Frame frame;
-		
+
 		protected CheckboxListener(TagCloud cloud, Id3Frame frame) {
 			this.tagCloud = cloud;
 			this.frame = frame;
@@ -285,7 +319,7 @@ public class TagEditFragment extends Fragment {
 
 		}
 	}
-	
+
 	private class ItemListener implements TextWatcher {
 		private final TagCloud tagCloud;
 		private final Id3Frame frame;

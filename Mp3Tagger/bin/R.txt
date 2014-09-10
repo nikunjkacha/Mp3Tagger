@@ -251,12 +251,13 @@ int id action_context_bar 0x7f06001d
 int id action_menu_divider 0x7f060016
 int id action_menu_presenter 0x7f060017
 int id action_mode_close_button 0x7f060024
-int id action_settings 0x7f06005b
+int id action_settings 0x7f06005c
 int id activity_chooser_view_content 0x7f060025
 int id always 0x7f06000b
 int id beginning 0x7f060011
+int id btnEditCover 0x7f06005a
 int id btnSaveCover 0x7f06003f
-int id btnSaveTags 0x7f06005a
+int id btnSaveTags 0x7f06005b
 int id cbAlbum 0x7f06004f
 int id cbArtist 0x7f06004c
 int id cbComposer 0x7f060052

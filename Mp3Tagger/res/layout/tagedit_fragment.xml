@@ -251,6 +251,7 @@
                         android:text="@string/tvCoverContent" />
 
                     <ImageButton
+                        android:id="@+id/btnEditCover"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
