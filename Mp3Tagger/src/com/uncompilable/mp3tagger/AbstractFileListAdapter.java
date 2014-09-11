@@ -57,19 +57,19 @@ public abstract class AbstractFileListAdapter extends ArrayAdapter<File> {
 			cbSelected.setVisibility(View.INVISIBLE);;
 		} else {
 			cbSelected.setVisibility(View.VISIBLE);
-			cbSelected.setChecked(mMain.getSelectionController().getSelection().contains(mFiles[position]));
+			cbSelected.setChecked(MainActivity.sSelectionController.getSelection().contains(mFiles[position]));
 			cbSelected.setOnClickListener(new OnClickListener() {
 
 				@Override
 				public void onClick(View source) {
 					if (cbSelected.isChecked()) {
-						Collection<File> files = mMain.getSelectionController().scanDirectory(mFiles[position]);
+						Collection<File> files = MainActivity.sSelectionController.scanDirectory(mFiles[position]);
 						
 						
 						
 						new SelectionTask(mMain).execute(files.toArray(new File[files.size()]));
 					} else {
-						mMain.getSelectionController().removeFromSelection(mFiles[position]);
+						MainActivity.sSelectionController.removeFromSelection(mFiles[position]);
 					}
 				}
 			});

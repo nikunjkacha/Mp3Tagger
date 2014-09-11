@@ -41,11 +41,12 @@ public class SelectionTask extends AsyncTask<File, Integer, String> {
 			public void onClick(DialogInterface dialog, int which) {
 				cancel(true);
 				for (File toRemove : mAdded) { //Remove all added files on cancel
-					mMain.getSelectionController().removeFromSelection(toRemove);
+					MainActivity.sSelectionController.removeFromSelection(toRemove);
 				}
 			}
 		});
 		
+		this.mDialog.setCanceledOnTouchOutside(false);
 		this.mDialog.show();
 		
 	}
@@ -56,7 +57,7 @@ public class SelectionTask extends AsyncTask<File, Integer, String> {
 		int progress = 0;
 		for (File file : files) {
 			try {
-				mMain.getSelectionController().addToSelection(file);
+				MainActivity.sSelectionController.addToSelection(file);
 				mAdded.add(file);
 				progress++;
 			} catch (UnsupportedTagException | InvalidDataException

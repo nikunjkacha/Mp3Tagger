@@ -31,7 +31,6 @@ import android.widget.Button;
 import android.widget.GridView;
 
 public class AlbumCoverFragment extends Fragment {
-	private MainActivity mMain;
 	private AsyncTask<String, String, String> mFetchTask;
 	private AlbumGridAdapter mAdapter;
 
@@ -39,11 +38,9 @@ public class AlbumCoverFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View root = inflater.inflate(R.layout.albumcover_fragment, container, false);
 
-		mMain = (MainActivity)this.getActivity();
+		mAdapter = new AlbumGridAdapter(getActivity());
 
-		mAdapter = new AlbumGridAdapter(mMain);
-
-		final FileSelection fileSelection = mMain.getSelectionController().getSelection();
+		final FileSelection fileSelection = MainActivity.sSelectionController.getSelection();
 		fileSelection.addObserver(new Observer() {
 
 			@Override
@@ -59,7 +56,7 @@ public class AlbumCoverFragment extends Fragment {
 		mFetchTask = new FetchTask();
 		mFetchTask.execute("");
 
-		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(mMain).build();
+		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getActivity()).build();
 		ImageLoader.getInstance().init(config);
 
 		GridView gvCoverGrid = (GridView) root.findViewById(R.id.gvCoverGrid);
@@ -73,7 +70,7 @@ public class AlbumCoverFragment extends Fragment {
 				final Bitmap cover = mAdapter.getSelected();
 				if (cover != null) {
 					final Collection<File> parentDirs = new HashSet<File>();
-					for (File file : mMain.getSelectionController().getSelection().getFileSet()) {
+					for (File file : MainActivity.sSelectionController.getSelection().getFileSet()) {
 						parentDirs.add(file.getParentFile());
 					}
 
@@ -124,7 +121,7 @@ public class AlbumCoverFragment extends Fragment {
 			try {
 				out = new FileOutputStream(path);
 				cover.compress(CompressFormat.JPEG, 90, out);
-				mMain.getSelectionController().getSelection().getTagCloud().setCoverFile(new File(path));
+				MainActivity.sSelectionController.getSelection().getTagCloud().setCoverFile(new File(path));
 			} catch (IOException e) {
 				Log.e(Constants.MAIN_TAG, "Could not write cover file", e);
 			} finally {
@@ -142,7 +139,7 @@ public class AlbumCoverFragment extends Fragment {
 
 		@Override
 		protected String doInBackground(String... mes) {
-			mAdapter.setItems(mMain.getSelectionController().getAlbumCoverController().getAlbumImages());
+			mAdapter.setItems(MainActivity.sSelectionController.getAlbumCoverController().getAlbumImages());
 			return null;
 		}
 

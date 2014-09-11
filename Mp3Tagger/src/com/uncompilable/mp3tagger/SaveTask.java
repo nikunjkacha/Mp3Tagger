@@ -37,6 +37,7 @@ public class SaveTask extends AsyncTask<File, Integer, String> {
 			}
 		});
 		
+		this.mDialog.setCanceledOnTouchOutside(false);
 		this.mDialog.show();
 		
 	}
@@ -48,7 +49,7 @@ public class SaveTask extends AsyncTask<File, Integer, String> {
 		
 		try {
 			for (File file : files) {
-				mMain.getSelectionController().getIOController().writeTags(file);
+				MainActivity.sSelectionController.getIOController().writeTags(file);
 				
 				publishProgress(progress++);
 			}

@@ -92,7 +92,7 @@ public class AlbumCoverController {
 				Log.w(Constants.MAIN_TAG, "Could not get Image Information. " + tries + " Tries left", e);
 				tries--;
 				try {
-					Thread.sleep(500);
+					Thread.sleep(1000);
 				} catch (InterruptedException e1) {
 					//do nothing
 				}

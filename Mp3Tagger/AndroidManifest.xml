@@ -34,7 +34,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.uncompilable.mp3tagger.MainActivity" />
         </activity>
+        <activity
+            android:name=".AlbumCoverActivity"
+            android:label="@string/title_activity_album_cover" >
+        </activity>
     </application>
 
 </manifest>
-

@@ -10,6 +10,7 @@ import com.uncompilable.mp3tagger.model.TagCloud;
 import com.uncompilable.mp3tagger.utility.Constants;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -74,7 +75,7 @@ public class TagEditFragment extends Fragment {
 
 		//Set Listeners for all items
 		ItemListener itemListener;
-		TagCloud cloud = mMain.getSelectionController().getSelection().getTagCloud();
+		TagCloud cloud = MainActivity.sSelectionController.getSelection().getTagCloud();
 		CheckboxListener checkListener = new CheckboxListener(cloud, Id3Frame.TITLE);
 
 		itemListener = new ItemListener(cloud, Id3Frame.TITLE); 
@@ -97,7 +98,7 @@ public class TagEditFragment extends Fragment {
 		mNpTrack.setMinValue(0);
 		mNpTrack.setMaxValue(512);
 
-		final TagCloud tags = mMain.getSelectionController().getSelection().getTagCloud();
+		final TagCloud tags = MainActivity.sSelectionController.getSelection().getTagCloud();
 
 		mCbTrack.setOnClickListener(checkListener);
 		mNpTrack.setOnValueChangedListener(new OnValueChangeListener() {
@@ -142,7 +143,8 @@ public class TagEditFragment extends Fragment {
 
 			@Override
 			public void onClick(View source) {
-				mMain.switchTab(MainActivity.TAB_COVER);
+				Intent coverIntent = new Intent(mMain, AlbumCoverActivity.class);
+				mMain.startActivity(coverIntent);
 			}
 
 		});
@@ -170,11 +172,10 @@ public class TagEditFragment extends Fragment {
 
 	private void refresh() {
 		if (mAdapter != null) {
-			mAdapter.setDisplayedFiles(mMain.
-					getSelectionController().
+			mAdapter.setDisplayedFiles(MainActivity.sSelectionController.
 					getSelection().
 					getFileSet().
-					toArray(new File[((MainActivity)this.getActivity()).getSelectionController().getSelection().getFileSet().size()]));
+					toArray(new File[MainActivity.sSelectionController.getSelection().getFileSet().size()]));
 		}
 		if (getView() != null) populateWidgets();
 	}
@@ -189,7 +190,7 @@ public class TagEditFragment extends Fragment {
 		NumberPicker npTracknumber = (NumberPicker) getView().findViewById(R.id.npTracknumber);
 		Spinner spGenre = (Spinner) getView().findViewById(R.id.spGenre);
 
-		TagCloud tags = mMain.getSelectionController().getSelection().getTagCloud();
+		TagCloud tags = MainActivity.sSelectionController.getSelection().getTagCloud();
 
 		Collection<String> currentFrame;
 
@@ -200,7 +201,7 @@ public class TagEditFragment extends Fragment {
 		currentFrame = tags.getValues(Id3Frame.COMPOSER	  ); fillWidget(currentFrame, etComposer);
 
 
-		if (mMain.getSelectionController().getSelection().getFileSet().size() == 1) {
+		if (MainActivity.sSelectionController.getSelection().getFileSet().size() == 1) {
 			npTracknumber.setEnabled(true);
 			int track = 0;
 			if (tags.getValues(Id3Frame.TRACK_NUMBER) != null && tags.getValues(Id3Frame.TRACK_NUMBER).size() > 0) {
@@ -231,8 +232,8 @@ public class TagEditFragment extends Fragment {
 			mCoverHeight = mBtnCover.getHeight();
 		}
 
-		File coverFile = mMain.getSelectionController().getSelection().getTagCloud().getCoverFile();
-		if (coverFile != null) {
+		File coverFile = MainActivity.sSelectionController.getSelection().getTagCloud().getCoverFile();
+		if (coverFile != null && MainActivity.sSelectionController.getSelection().getTagCloud().getValues(Id3Frame.ALBUM_TITLE).size() == 1) {
 			Bitmap coverBitmap = BitmapFactory.decodeFile(coverFile.getAbsolutePath());
 			if (coverBitmap != null) { 
 				mBtnCover.setImageBitmap(Bitmap.createScaledBitmap(coverBitmap, mCoverWidth, mCoverHeight, false));
@@ -242,6 +243,8 @@ public class TagEditFragment extends Fragment {
 		} else {
 			mBtnCover.setImageResource(R.drawable.ic_mp3file);
 		}
+		
+		mBtnCover.setEnabled(MainActivity.sSelectionController.getSelection().getTagCloud().getValues(Id3Frame.ALBUM_TITLE).size() == 1);
 	}
 
 	private void fillWidget(Collection<String> values, EditText widget) {
@@ -253,7 +256,7 @@ public class TagEditFragment extends Fragment {
 
 	private void updateCheckboxes() {
 		//Check the checkboxes, if the frame is currently selected by the TagMap
-		TagCloud tags = mMain.getSelectionController().getSelection().getTagCloud();
+		TagCloud tags = MainActivity.sSelectionController.getSelection().getTagCloud();
 
 		mCbTitle   .setChecked(tags.isSelected(Id3Frame.TITLE	   ));
 		mCbArtist  .setChecked(tags.isSelected(Id3Frame.ARTIST	   	));
@@ -264,7 +267,7 @@ public class TagEditFragment extends Fragment {
 	}
 
 	private void saveTags() {
-		TagCloud tags = mMain.getSelectionController().getSelection().getTagCloud();
+		TagCloud tags = MainActivity.sSelectionController.getSelection().getTagCloud();
 
 		tags.setValue(new FrameValuePair(Id3Frame.TITLE, mEtTitle.getText().toString()));
 		tags.setValue(new FrameValuePair(Id3Frame.ARTIST, mEtArtist.getText().toString()));
@@ -274,9 +277,9 @@ public class TagEditFragment extends Fragment {
 		tags.setValue(new FrameValuePair(Id3Frame.TRACK_NUMBER, mNpTrack.getValue() + ""));
 		tags.setValue(new FrameValuePair(Id3Frame.GENRE, (String) mSpGenre.getSelectedItem()));
 
-		mMain.getSelectionController().getSelection().getTagCloud().writeLocalChanges();
+		MainActivity.sSelectionController.getSelection().getTagCloud().writeLocalChanges();
 		
-		Collection<File> fileSet = mMain.getSelectionController().getSelection().getFileSet();
+		Collection<File> fileSet = MainActivity.sSelectionController.getSelection().getFileSet();
 		new SaveTask(mMain).execute(fileSet.toArray(new File[fileSet.size()]));
 	}
 
