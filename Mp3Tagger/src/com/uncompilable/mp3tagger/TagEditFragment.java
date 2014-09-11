@@ -1,15 +1,9 @@
 package com.uncompilable.mp3tagger;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Collection;
-import java.util.Observable;
-import java.util.Observer;
 
 import com.mpatric.mp3agic.ID3v1Genres;
-import com.mpatric.mp3agic.InvalidDataException;
-import com.mpatric.mp3agic.NotSupportedException;
-import com.mpatric.mp3agic.UnsupportedTagException;
 import com.uncompilable.mp3tagger.model.FrameValuePair;
 import com.uncompilable.mp3tagger.model.Id3Frame;
 import com.uncompilable.mp3tagger.model.TagCloud;
@@ -172,23 +166,6 @@ public class TagEditFragment extends Fragment {
 
 		this.mMain = (MainActivity) activity;
 		this.mAdapter = new SimpleFileListAdapter(mMain, new File[0]);
-
-		mMain.getSelectionController().getSelection().addObserver(new Observer() {
-
-			@Override
-			public void update(Observable source, Object data) {
-				refresh();
-			}
-
-		});
-		
-		mMain.getSelectionController().getSelection().getTagCloud().addObserver(new Observer() {
-			
-			@Override
-			public void update(Observable source, Object data) {
-				populateWidgets();
-			}
-		});
 	}
 
 	private void refresh() {
@@ -297,15 +274,19 @@ public class TagEditFragment extends Fragment {
 		tags.setValue(new FrameValuePair(Id3Frame.TRACK_NUMBER, mNpTrack.getValue() + ""));
 		tags.setValue(new FrameValuePair(Id3Frame.GENRE, (String) mSpGenre.getSelectedItem()));
 
-		try {
-			mMain.getSelectionController().getIOController().writeTags();
-		} catch (UnsupportedTagException | InvalidDataException
-				| NotSupportedException | IOException e) {
-			Log.e(Constants.MAIN_TAG, "ERROR: Could not write tags to file", e);
-		}
+		mMain.getSelectionController().getSelection().getTagCloud().writeLocalChanges();
+		
+		Collection<File> fileSet = mMain.getSelectionController().getSelection().getFileSet();
+		new SaveTask(mMain).execute(fileSet.toArray(new File[fileSet.size()]));
 	}
 
-
+	@Override
+	public void setUserVisibleHint(boolean isVisible) {
+		super.setUserVisibleHint(isVisible);
+		if (isVisible) {
+			refresh();
+		}
+	}
 
 	private class CheckboxListener implements OnClickListener {
 		private final TagCloud tagCloud;

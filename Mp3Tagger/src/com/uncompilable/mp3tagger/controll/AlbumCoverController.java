@@ -91,6 +91,11 @@ public class AlbumCoverController {
 			if (tries > 0) {
 				Log.w(Constants.MAIN_TAG, "Could not get Image Information. " + tries + " Tries left", e);
 				tries--;
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e1) {
+					//do nothing
+				}
 				return connect(searchTerm);
 			} else {
 				Log.e(Constants.MAIN_TAG, "Aborting connection tries. No URL's could be returned");

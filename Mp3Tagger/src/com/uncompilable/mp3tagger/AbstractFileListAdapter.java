@@ -4,12 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 
-import com.mpatric.mp3agic.InvalidDataException;
-import com.mpatric.mp3agic.UnsupportedTagException;
-import com.uncompilable.mp3tagger.error.InvalidFileException;
-import com.uncompilable.mp3tagger.error.NoTagAssociatedWithFileException;
 import com.uncompilable.mp3tagger.utility.Constants;
 
 import android.content.Context;
@@ -31,7 +28,7 @@ public abstract class AbstractFileListAdapter extends ArrayAdapter<File> {
 	protected final MainActivity mMain;
 
 	protected File[] mFiles;
-	
+
 	public AbstractFileListAdapter(MainActivity main, File[] files) {
 		super(main, R.layout.list_item, files);
 
@@ -66,11 +63,11 @@ public abstract class AbstractFileListAdapter extends ArrayAdapter<File> {
 				@Override
 				public void onClick(View source) {
 					if (cbSelected.isChecked()) {
-						try {
-							mMain.getSelectionController().addToSelection(mFiles[position]);
-						} catch (InvalidFileException | IOException | NoTagAssociatedWithFileException | UnsupportedTagException | InvalidDataException e) {
-							Log.e(Constants.MAIN_TAG, "ERROR: could not add file " + mFiles[position] + " to Selection!", e);
-						}
+						Collection<File> files = mMain.getSelectionController().scanDirectory(mFiles[position]);
+						
+						
+						
+						new SelectionTask(mMain).execute(files.toArray(new File[files.size()]));
 					} else {
 						mMain.getSelectionController().removeFromSelection(mFiles[position]);
 					}
@@ -95,7 +92,7 @@ public abstract class AbstractFileListAdapter extends ArrayAdapter<File> {
 		});
 		notifyDataSetChanged();
 	}
-	
+
 	public final File[] getDisplayedFiles() {
 		return mFiles;
 	}

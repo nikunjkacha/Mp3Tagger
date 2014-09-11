@@ -15,6 +15,8 @@ import com.uncompilable.mp3tagger.controll.SelectionController;
 import com.uncompilable.mp3tagger.model.FileSelection;
 import com.uncompilable.mp3tagger.utility.Constants;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.os.AsyncTask;
@@ -68,43 +70,36 @@ public class AlbumCoverFragment extends Fragment {
 
 			@Override
 			public void onClick(View source) {
-				Bitmap cover = mAdapter.getSelected();
+				final Bitmap cover = mAdapter.getSelected();
 				if (cover != null) {
-					Collection<File> parentDirs = new HashSet<File>();
+					final Collection<File> parentDirs = new HashSet<File>();
 					for (File file : mMain.getSelectionController().getSelection().getFileSet()) {
 						parentDirs.add(file.getParentFile());
 					}
 
-					for (File dir : parentDirs) {
-						String path = dir.getAbsolutePath().concat("/cover.jpg");
-						OutputStream out = null;
-						
-						for (String oldFileName : SelectionController.COVER_NAMES) {
-							String oldFilePath = dir.getAbsolutePath().concat("/".concat(oldFileName));
-							File oldFile = new File(oldFilePath);
-							if (oldFile.exists()) {
-								oldFile.delete();
+					if (parentDirs.size() > 1) {
+						AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+						dialogBuilder.setMessage(R.string.coverAlert);
+						dialogBuilder.setTitle(R.string.coverAlert_title);
+						dialogBuilder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								saveCover(cover, parentDirs);
 							}
-						}
+						});
 						
-						try {
-							out = new FileOutputStream(path);
-							cover.compress(CompressFormat.JPEG, 90, out);
-							mMain.getSelectionController().getSelection().getTagCloud().setCoverFile(new File(path));
-						} catch (IOException e) {
-							Log.e(Constants.MAIN_TAG, "Could not write cover file", e);
-						} finally {
-								try {
-									if (out != null)
-									out.close();
-								} catch (IOException e) {
-									//Do nothing
-								}
-						}
+						dialogBuilder.setNegativeButton(R.string.cancel, null);
+						
+						AlertDialog dialog = dialogBuilder.create();
+						dialog.show();
+					} else {
+						saveCover(cover, parentDirs);
 					}
+
 				}
-				
-				
+
+
 			}
 
 		});
@@ -112,6 +107,36 @@ public class AlbumCoverFragment extends Fragment {
 		return root;
 	}
 
+	
+	private void saveCover(final Bitmap cover, final Collection<File> parentDirs) {
+		for (File dir : parentDirs) {
+			String path = dir.getAbsolutePath().concat("/cover.jpg");
+			OutputStream out = null;
+
+			for (String oldFileName : SelectionController.COVER_NAMES) {
+				String oldFilePath = dir.getAbsolutePath().concat("/".concat(oldFileName));
+				File oldFile = new File(oldFilePath);
+				if (oldFile.exists()) {
+					oldFile.delete();
+				}
+			}
+
+			try {
+				out = new FileOutputStream(path);
+				cover.compress(CompressFormat.JPEG, 90, out);
+				mMain.getSelectionController().getSelection().getTagCloud().setCoverFile(new File(path));
+			} catch (IOException e) {
+				Log.e(Constants.MAIN_TAG, "Could not write cover file", e);
+			} finally {
+				try {
+					if (out != null)
+						out.close();
+				} catch (IOException e) {
+					//Do nothing
+				}
+			}
+		}
+	}
 
 	private class FetchTask extends AsyncTask<String, String, String> {
 

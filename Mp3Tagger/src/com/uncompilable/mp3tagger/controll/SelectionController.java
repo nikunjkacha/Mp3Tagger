@@ -117,7 +117,7 @@ public class SelectionController {
 	}
 
 
-	private List<File> scanDirectory(File file) {
+	public List<File> scanDirectory(File file) {
 		return scanDirectory(file, Integer.parseInt(mPreferences.getString(Constants.PREF_KEY_RECURSION, "5")));
 	}
 

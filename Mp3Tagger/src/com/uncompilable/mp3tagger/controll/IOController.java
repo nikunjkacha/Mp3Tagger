@@ -51,14 +51,14 @@ public class IOController {
 		} else if (mp3.hasId3v1Tag()) {
 			ID3v1 fileTag = mp3.getId3v1Tag();
 			ID3v2 resultTag = new ID3v24Tag();
-			
+
 			resultTag.setTitle(fileTag.getTitle());
 			resultTag.setArtist(fileTag.getArtist());
 			resultTag.setAlbum(fileTag.getAlbum());
 			resultTag.setTrack(fileTag.getTrack());
 			resultTag.setGenre(fileTag.getGenre());
 			resultTag.setGenreDescription(fileTag.getGenreDescription());
-			
+
 			return resultTag;
 		} else {
 			return new ID3v24Tag();
@@ -73,20 +73,17 @@ public class IOController {
 	 * @throws NotSupportedException 
 	 * @throws TagException
 	 */
-	public void writeTags() throws IOException, UnsupportedTagException, InvalidDataException, NotSupportedException {
-		mSelectionController.getSelection().getTagCloud().writeLocalChanges();
+	public void writeTags(File file) throws IOException, UnsupportedTagException, InvalidDataException, NotSupportedException {
 
-		for (File file : mSelectionController.getSelection().getFileSet()) {
-			String path = file.getCanonicalPath();
-			Mp3File mp3 = new Mp3File(file.getAbsolutePath());
-			ID3v2 tag = mSelectionController.getSelection().getTagCloud().getTagMap().get(file);
-			mp3.setId3v2Tag(tag);
-			mp3.save(path + "_temp.mp3");
-			if (file.delete()) {
-				new File(path + "_temp.mp3").renameTo(new File(path));
-			} else {
-				new File(path + "_temp.mp3").delete();
-			}
+		String path = file.getCanonicalPath();
+		Mp3File mp3 = new Mp3File(file.getAbsolutePath());
+		ID3v2 tag = mSelectionController.getSelection().getTagCloud().getTagMap().get(file);
+		mp3.setId3v2Tag(tag);
+		mp3.save(path + "_temp.mp3");
+		if (file.delete()) {
+			new File(path + "_temp.mp3").renameTo(new File(path));
+		} else {
+			new File(path + "_temp.mp3").delete();
 		}
 	}
 
