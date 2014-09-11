@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Observable;
 
 import com.google.common.collect.Multiset;
 import com.google.common.collect.TreeMultiset;
@@ -19,7 +20,7 @@ import com.uncompilable.mp3tagger.error.NoTagAssociatedWithFileException;
  * @author dennis
  *
  */
-public class TagCloud {
+public class TagCloud extends Observable {
 	private final Map<File, ID3v2> mFileTagMap;
 	private final Map<Id3Frame, Multiset<String>> mFrameValueMap;
 	private File mCover;
@@ -49,6 +50,9 @@ public class TagCloud {
 		Multiset<String> newValues = TreeMultiset.<String>create();
 		newValues.add(value.getValue());
 		mFrameValueMap.put(value.getFrame(), newValues);
+		
+		setChanged();
+		notifyObservers();
 	}
 	
 	/**
@@ -111,6 +115,9 @@ public class TagCloud {
 		if (validValue(tag.getComposer		  ())) mFrameValueMap.get(Id3Frame.COMPOSER    ).add(tag.getComposer		());
 		if (validValue(tag.getGenreDescription())) mFrameValueMap.get(Id3Frame.GENRE       ).add(tag.getGenreDescription());
 		if (validValue(tag.getTrack			  ())) mFrameValueMap.get(Id3Frame.TRACK_NUMBER).add(tag.getTrack			());
+		
+		setChanged();
+		notifyObservers();
 	}
 
 	/**
@@ -129,6 +136,9 @@ public class TagCloud {
 		if (validValue(tag.getComposer		  ())) mFrameValueMap.get(Id3Frame.COMPOSER    ).remove(tag.getComposer		());
 		if (validValue(tag.getGenreDescription())) mFrameValueMap.get(Id3Frame.GENRE       ).remove(tag.getGenreDescription());
 		if (validValue(tag.getTrack			  ())) mFrameValueMap.get(Id3Frame.TRACK_NUMBER).remove(tag.getTrack			());
+		
+		setChanged();
+		notifyObservers();
 	}
 	
 	/**
@@ -176,5 +186,8 @@ public class TagCloud {
 
 	public void setCoverFile(File cover) {
 		this.mCover = cover;
+		
+		setChanged();
+		notifyObservers();
 	}
 }

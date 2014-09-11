@@ -60,12 +60,6 @@ public class MainActivity extends ActionBarActivity implements TabListener {
 			@Override
 			public void onPageSelected(int index) {
 				actionBar.setSelectedNavigationItem(index);
-				if (index == TAB_SELECTION) {
-					((FileSelectionFragment)mPagerAdapter.getItem(0)).refresh();
-				}
-				else if (index == TAB_EDIT) {
-					((TagEditFragment)mPagerAdapter.getItem(1)).refresh();
-				}
 			}
 		});
 	}
@@ -74,11 +68,9 @@ public class MainActivity extends ActionBarActivity implements TabListener {
 		if (tab == TAB_SELECTION) {
 			mPager.setCurrentItem(tab);
 			this.getActionBar().setSelectedNavigationItem(tab);
-			((FileSelectionFragment)mPagerAdapter.getItem(tab)).refresh();
 		} else if (tab == TAB_EDIT) {
 			mPager.setCurrentItem(tab);
 			this.getActionBar().setSelectedNavigationItem(tab);
-			((TagEditFragment)mPagerAdapter.getItem(tab)).refresh();
 		} else if (tab == TAB_COVER) {
 			mPager.setCurrentItem(tab);
 			this.getActionBar().setSelectedNavigationItem(tab);

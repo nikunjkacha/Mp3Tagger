@@ -80,7 +80,7 @@ public class AlbumCoverFragment extends Fragment {
 						OutputStream out = null;
 						
 						for (String oldFileName : SelectionController.COVER_NAMES) {
-							String oldFilePath = dir.getAbsolutePath().concat(oldFileName);
+							String oldFilePath = dir.getAbsolutePath().concat("/".concat(oldFileName));
 							File oldFile = new File(oldFilePath);
 							if (oldFile.exists()) {
 								oldFile.delete();
@@ -90,6 +90,7 @@ public class AlbumCoverFragment extends Fragment {
 						try {
 							out = new FileOutputStream(path);
 							cover.compress(CompressFormat.JPEG, 90, out);
+							mMain.getSelectionController().getSelection().getTagCloud().setCoverFile(new File(path));
 						} catch (IOException e) {
 							Log.e(Constants.MAIN_TAG, "Could not write cover file", e);
 						} finally {
@@ -102,6 +103,8 @@ public class AlbumCoverFragment extends Fragment {
 						}
 					}
 				}
+				
+				
 			}
 
 		});

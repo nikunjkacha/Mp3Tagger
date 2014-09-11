@@ -40,10 +40,4 @@ public class FileSelectionFragment extends Fragment {
 
 		return root;
 	}
-
-	public void refresh() {
-		if (mListAdapter != null) {
-			mListAdapter.notifyDataSetChanged();
-		}
-	}
 }

@@ -177,13 +177,21 @@ public class TagEditFragment extends Fragment {
 
 			@Override
 			public void update(Observable source, Object data) {
-				populateWidgets();
+				refresh();
 			}
 
 		});
+		
+		mMain.getSelectionController().getSelection().getTagCloud().addObserver(new Observer() {
+			
+			@Override
+			public void update(Observable source, Object data) {
+				populateWidgets();
+			}
+		});
 	}
 
-	public void refresh() {
+	private void refresh() {
 		if (mAdapter != null) {
 			mAdapter.setDisplayedFiles(mMain.
 					getSelectionController().
@@ -249,7 +257,11 @@ public class TagEditFragment extends Fragment {
 		File coverFile = mMain.getSelectionController().getSelection().getTagCloud().getCoverFile();
 		if (coverFile != null) {
 			Bitmap coverBitmap = BitmapFactory.decodeFile(coverFile.getAbsolutePath());
-			mBtnCover.setImageBitmap(Bitmap.createScaledBitmap(coverBitmap, mCoverWidth, mCoverHeight, false));
+			if (coverBitmap != null) { 
+				mBtnCover.setImageBitmap(Bitmap.createScaledBitmap(coverBitmap, mCoverWidth, mCoverHeight, false));
+			} else {
+				mBtnCover.setImageResource(R.drawable.ic_mp3file);
+			}
 		} else {
 			mBtnCover.setImageResource(R.drawable.ic_mp3file);
 		}
