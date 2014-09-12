@@ -83,6 +83,7 @@ public class AlbumCoverFragment extends Fragment {
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
 								saveCover(cover, parentDirs);
+								
 							}
 						});
 						
@@ -95,8 +96,8 @@ public class AlbumCoverFragment extends Fragment {
 					}
 
 				}
-
-
+				
+				getActivity().finish();
 			}
 
 		});

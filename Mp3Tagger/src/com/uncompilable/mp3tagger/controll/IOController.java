@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import android.media.Image;
+import android.util.Log;
 
 import com.mpatric.mp3agic.ID3v1;
 import com.mpatric.mp3agic.ID3v2;
@@ -13,6 +14,7 @@ import com.mpatric.mp3agic.Mp3File;
 import com.mpatric.mp3agic.NotSupportedException;
 import com.mpatric.mp3agic.UnsupportedTagException;
 import com.uncompilable.mp3tagger.error.NoTagAssociatedWithFileException;
+import com.uncompilable.mp3tagger.utility.Constants;
 
 
 /**
@@ -45,7 +47,7 @@ public class IOController {
 	 * @throws CannotReadException 
 	 */
 	public ID3v2 readFile(File file) throws IOException, NoTagAssociatedWithFileException, UnsupportedTagException, InvalidDataException {
-		Mp3File mp3 = new Mp3File(file.getAbsolutePath());
+		Mp3File mp3 = new Mp3File(file.getAbsolutePath(), false);
 		if (mp3.hasId3v2Tag()) {
 			return mp3.getId3v2Tag();
 		} else if (mp3.hasId3v1Tag()) {
@@ -74,14 +76,35 @@ public class IOController {
 	 * @throws TagException
 	 */
 	public void writeTags(File file) throws IOException, UnsupportedTagException, InvalidDataException, NotSupportedException {
-
 		String path = file.getCanonicalPath();
-		Mp3File mp3 = new Mp3File(file.getAbsolutePath());
+		Log.d(Constants.MAIN_TAG, "Writing file " + path);
+		
+		long time = System.currentTimeMillis();
+		Mp3File mp3 = new Mp3File(file.getAbsolutePath(), false);
+		long deltaTime = System.currentTimeMillis() - time;
+		Log.d(Constants.MAIN_TAG, "Opened original mp3-File (" + deltaTime + "ms)");
+		
 		ID3v2 tag = mSelectionController.getSelection().getTagCloud().getTagMap().get(file);
 		mp3.setId3v2Tag(tag);
+		if (mp3.hasId3v1Tag()) {
+			mp3.removeId3v1Tag();
+		}
+		
+		time = System.currentTimeMillis();
 		mp3.save(path + "_temp.mp3");
-		if (file.delete()) {
+		deltaTime = System.currentTimeMillis() - time;
+		Log.d(Constants.MAIN_TAG,  "Wrote mp3-File (" + deltaTime + "ms)");
+		
+		time = System.currentTimeMillis();
+		boolean deleted = file.delete();
+		deltaTime = System.currentTimeMillis() - time;
+		Log.d(Constants.MAIN_TAG, "Deleted original file (" + deltaTime + "ms)");
+		
+		if (deleted) {
+			time = System.currentTimeMillis();
 			new File(path + "_temp.mp3").renameTo(new File(path));
+			deltaTime = System.currentTimeMillis() - time;
+			Log.d(Constants.MAIN_TAG, "Renamed saved file(" + deltaTime + "ms)");
 		} else {
 			new File(path + "_temp.mp3").delete();
 		}

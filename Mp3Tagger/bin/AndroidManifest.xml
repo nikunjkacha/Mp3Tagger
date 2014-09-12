@@ -36,7 +36,8 @@
         </activity>
         <activity
             android:name=".AlbumCoverActivity"
-            android:label="@string/title_activity_album_cover" >
+            android:label="@string/title_activity_album_cover" 
+            android:parentActivityName=".MainActivity" >
         </activity>
     </application>
 

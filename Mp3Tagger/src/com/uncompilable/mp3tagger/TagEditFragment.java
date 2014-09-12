@@ -73,6 +73,17 @@ public class TagEditFragment extends Fragment {
 		mCbTrack    = (CheckBox) root.findViewById(R.id.cbTracknumber);
 		mCbGenre    = (CheckBox) root.findViewById(R.id.cbGenre);
 
+		mNpTrack= (NumberPicker) root.findViewById(R.id.npTracknumber);
+		mNpTrack.setMinValue(0);
+		mNpTrack.setMaxValue(512);
+
+		mSpGenre = (Spinner) root.findViewById(R.id.spGenre);
+		mSpGenre.setAdapter(new ArrayAdapter<String>(mMain, R.layout.simple_textview_item, ID3v1Genres.GENRES));
+
+		
+		refresh();
+		
+		
 		//Set Listeners for all items
 		ItemListener itemListener;
 		TagCloud cloud = MainActivity.sSelectionController.getSelection().getTagCloud();
@@ -94,9 +105,6 @@ public class TagEditFragment extends Fragment {
 		mEtComposer.addTextChangedListener(itemListener);
 		mCbComposer.setOnClickListener(checkListener);
 
-		mNpTrack= (NumberPicker) root.findViewById(R.id.npTracknumber);
-		mNpTrack.setMinValue(0);
-		mNpTrack.setMaxValue(512);
 
 		final TagCloud tags = MainActivity.sSelectionController.getSelection().getTagCloud();
 
@@ -110,10 +118,6 @@ public class TagEditFragment extends Fragment {
 			}
 
 		});
-
-		mSpGenre = (Spinner) root.findViewById(R.id.spGenre);
-		mSpGenre.setAdapter(new ArrayAdapter<String>(mMain, R.layout.simple_textview_item, ID3v1Genres.GENRES));
-
 		mCbGenre.setOnClickListener(checkListener);
 
 		mSpGenre.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -133,7 +137,6 @@ public class TagEditFragment extends Fragment {
 		});
 
 
-		refresh();
 		ListView lvSelection = (ListView) root.findViewById(R.id.lvFiles);
 		lvSelection.setAdapter(mAdapter);
 
@@ -177,7 +180,10 @@ public class TagEditFragment extends Fragment {
 					getFileSet().
 					toArray(new File[MainActivity.sSelectionController.getSelection().getFileSet().size()]));
 		}
-		if (getView() != null) populateWidgets();
+		if (getView() != null) {
+			populateWidgets();
+			updateCheckboxes();
+		}
 	}
 
 	private void populateWidgets() {
@@ -200,7 +206,7 @@ public class TagEditFragment extends Fragment {
 		currentFrame = tags.getValues(Id3Frame.ALBUM_TITLE); fillWidget(currentFrame, etAlbum	);
 		currentFrame = tags.getValues(Id3Frame.COMPOSER	  ); fillWidget(currentFrame, etComposer);
 
-
+		//Enable the numberpicker only if there is only one seleted file
 		if (MainActivity.sSelectionController.getSelection().getFileSet().size() == 1) {
 			npTracknumber.setEnabled(true);
 			int track = 0;
@@ -223,7 +229,6 @@ public class TagEditFragment extends Fragment {
 		}
 		if (index < spGenre.getAdapter().getCount()) spGenre.setSelection(index < 0? 0 : index);
 
-		updateCheckboxes();
 		if (mCoverWidth <= 0) {
 			mCoverWidth = mBtnCover.getWidth(); 
 		}
@@ -287,7 +292,12 @@ public class TagEditFragment extends Fragment {
 	public void setUserVisibleHint(boolean isVisible) {
 		super.setUserVisibleHint(isVisible);
 		if (isVisible) {
+			
 			refresh();
+			for (Id3Frame frame : Id3Frame.values()) {
+				MainActivity.sSelectionController.getSelection().getTagCloud().setFrameUnselected(frame);
+			}
+			updateCheckboxes();
 		}
 	}
 
