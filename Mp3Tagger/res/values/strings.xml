@@ -45,6 +45,7 @@
     <string name="diaSaveFiles">Saving Files...</string>
     <string name="coverAlert_title">Alert</string>
     <string name="coverAlert">The current selection contains multiple folders. Write cover file in every folder?</string>
+    <string name="coverError">An Error occurred while retrieving images. Try again?</string>
     <string name="title_activity_album_cover">Select Album Cover</string>
 
 </resources>

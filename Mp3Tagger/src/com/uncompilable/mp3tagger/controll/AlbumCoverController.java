@@ -19,24 +19,22 @@ import android.util.Log;
 public class AlbumCoverController {
 	private SelectionController mSelectionController;
 
-	private int tries;
-
 	private static final String API_URL = "https://ajax.googleapis.com/ajax/services/search/images?v=1.0&rsz=8&q=";
-	private static final int CONNECTION_TRIES = 5;
 
 	public AlbumCoverController(SelectionController selectionController) {
 		super();
 		this.mSelectionController = selectionController;
 
-		tries = CONNECTION_TRIES;
 	}
 
 	/**
 	 * Returns an Array of Strings with Image-URL's for the album in the Collection.
 	 * Returns null, of more than one Album Title is in the selection.
 	 * @return - The Image URL's or null.
+	 * @throws IOException 
+	 * @throws JSONException 
 	 */
-	public String[] getAlbumImages() {
+	public String[] getAlbumImages() throws JSONException, IOException {
 		TagCloud tags = mSelectionController.getSelection().getTagCloud();
 		String[] albums  = tags.getValues(Id3Frame.ALBUM_TITLE).toArray(new String[tags.getValues(Id3Frame.ALBUM_TITLE).size()]);
 		String[] artists = tags.getValues(Id3Frame.ARTIST).toArray(new String[tags.getValues(Id3Frame.ARTIST).size()]);
@@ -51,7 +49,6 @@ public class AlbumCoverController {
 				searchTerm = searchTerm.concat("%20".concat(artists[0].replace(" ", "%20")));
 			}
 
-			tries = CONNECTION_TRIES;
 			return connect(searchTerm);
 
 		} else {
@@ -59,8 +56,7 @@ public class AlbumCoverController {
 		}
 	}
 
-	private String[] connect(String searchTerm) {
-		try {
+	private String[] connect(String searchTerm) throws JSONException, IOException {
 		URL url;
 		URLConnection connection;
 		String urlString = API_URL + searchTerm;
@@ -87,22 +83,5 @@ public class AlbumCoverController {
 			Log.d(Constants.MAIN_TAG, result[i]);
 		}
 		return result;
-		
-		} catch (IOException | JSONException e) {
-			if (tries > 0) {
-				Log.w(Constants.MAIN_TAG, "Could not get Image Information. " + tries + " Tries left", e);
-				tries--;
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e1) {
-					//do nothing
-				}
-				return connect(searchTerm);
-			} else {
-				Log.e(Constants.MAIN_TAG, "Aborting connection tries. No URL's could be returned");
-				return new String[0];
-			}
-		}
-
 	}
 }
