@@ -54,6 +54,7 @@ public class TagEditFragment extends Fragment {
 	private CheckBox mCbGenre;
 
 	private ImageButton mBtnCover;
+	private Button mBtnSave;
 
 	private int mCoverWidth, mCoverHeight;
 
@@ -61,6 +62,24 @@ public class TagEditFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View root = inflater.inflate(R.layout.tagedit_fragment, container, false);
 
+		bindViews(root);
+		
+		mNpTrack.setMinValue(0);
+		mNpTrack.setMaxValue(512);
+
+		mSpGenre.setAdapter(new ArrayAdapter<String>(mMain, R.layout.simple_textview_item, ID3v1Genres.GENRES));
+
+		refresh();
+		addListeners();
+
+		ListView lvSelection = (ListView) root.findViewById(R.id.lvFiles);
+		lvSelection.setAdapter(mAdapter);
+
+		return root;
+		
+	}
+	
+	private void bindViews(View root) {
 		mEtTitle 	= (EditText) root.findViewById(R.id.etTitle   );
 		mEtArtist  	= (EditText) root.findViewById(R.id.etArtist  );
 		mEtAlbum    = (EditText) root.findViewById(R.id.etAlbum   );
@@ -73,18 +92,14 @@ public class TagEditFragment extends Fragment {
 		mCbTrack    = (CheckBox) root.findViewById(R.id.cbTracknumber);
 		mCbGenre    = (CheckBox) root.findViewById(R.id.cbGenre);
 
-		mNpTrack= (NumberPicker) root.findViewById(R.id.npTracknumber);
-		mNpTrack.setMinValue(0);
-		mNpTrack.setMaxValue(512);
-
+		mNpTrack = (NumberPicker) root.findViewById(R.id.npTracknumber);
 		mSpGenre = (Spinner) root.findViewById(R.id.spGenre);
-		mSpGenre.setAdapter(new ArrayAdapter<String>(mMain, R.layout.simple_textview_item, ID3v1Genres.GENRES));
-
 		
-		refresh();
-		
-		
-		//Set Listeners for all items
+		mBtnCover = (ImageButton) root.findViewById(R.id.btnEditCover);
+		mBtnSave  = (Button) root.findViewById(R.id.btnSaveTags);
+	}
+	
+	private void addListeners() {
 		ItemListener itemListener;
 		TagCloud cloud = MainActivity.sSelectionController.getSelection().getTagCloud();
 		CheckboxListener checkListener = new CheckboxListener(cloud, Id3Frame.TITLE);
@@ -104,11 +119,11 @@ public class TagEditFragment extends Fragment {
 		itemListener = new ItemListener(cloud, Id3Frame.COMPOSER); 
 		mEtComposer.addTextChangedListener(itemListener);
 		mCbComposer.setOnClickListener(checkListener);
-
-
-		final TagCloud tags = MainActivity.sSelectionController.getSelection().getTagCloud();
-
+		
 		mCbTrack.setOnClickListener(checkListener);
+		
+		final TagCloud tags = MainActivity.sSelectionController.getSelection().getTagCloud();
+		
 		mNpTrack.setOnValueChangedListener(new OnValueChangeListener() {
 
 			@Override
@@ -133,15 +148,8 @@ public class TagEditFragment extends Fragment {
 				tags.setFrameUnselected(Id3Frame.GENRE);
 				updateCheckboxes();
 			}
-
 		});
-
-
-		ListView lvSelection = (ListView) root.findViewById(R.id.lvFiles);
-		lvSelection.setAdapter(mAdapter);
-
-		mBtnCover = (ImageButton) root.findViewById(R.id.btnEditCover);
-
+		
 		mBtnCover.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -151,9 +159,8 @@ public class TagEditFragment extends Fragment {
 			}
 
 		});
-
-		Button btnSave = (Button) root.findViewById(R.id.btnSaveTags);
-		btnSave.setOnClickListener(new OnClickListener() {
+		
+		mBtnSave.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View source) {
@@ -162,7 +169,13 @@ public class TagEditFragment extends Fragment {
 
 		});
 
-		return root;
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		populateWidgets();
+		updateCheckboxes();
 	}
 
 	@Override
@@ -187,12 +200,6 @@ public class TagEditFragment extends Fragment {
 	}
 
 	private void populateWidgets() {
-		EditText etTitle 	= (EditText) getView().findViewById(R.id.etTitle   );
-		EditText etArtist  	= (EditText) getView().findViewById(R.id.etArtist  );
-		EditText etAlbum    = (EditText) getView().findViewById(R.id.etAlbum   );
-		EditText etComposer = (EditText) getView().findViewById(R.id.etComposer);
-
-
 		NumberPicker npTracknumber = (NumberPicker) getView().findViewById(R.id.npTracknumber);
 		Spinner spGenre = (Spinner) getView().findViewById(R.id.spGenre);
 
@@ -201,10 +208,10 @@ public class TagEditFragment extends Fragment {
 		Collection<String> currentFrame;
 
 		//Fill the EditTexts with the tag value
-		currentFrame = tags.getValues(Id3Frame.TITLE	  ); fillWidget(currentFrame, etTitle	);
-		currentFrame = tags.getValues(Id3Frame.ARTIST	  ); fillWidget(currentFrame, etArtist	);
-		currentFrame = tags.getValues(Id3Frame.ALBUM_TITLE); fillWidget(currentFrame, etAlbum	);
-		currentFrame = tags.getValues(Id3Frame.COMPOSER	  ); fillWidget(currentFrame, etComposer);
+		currentFrame = tags.getValues(Id3Frame.TITLE	  ); fillWidget(currentFrame, mEtTitle	);
+		currentFrame = tags.getValues(Id3Frame.ARTIST	  ); fillWidget(currentFrame, mEtArtist	);
+		currentFrame = tags.getValues(Id3Frame.ALBUM_TITLE); fillWidget(currentFrame, mEtAlbum	);
+		currentFrame = tags.getValues(Id3Frame.COMPOSER	  ); fillWidget(currentFrame, mEtComposer);
 
 		//Enable the numberpicker only if there is only one seleted file
 		if (MainActivity.sSelectionController.getSelection().getFileSet().size() == 1) {

@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.view.MenuItem;
 
 public class AlbumCoverActivity extends FragmentActivity {
 	private AlbumGridAdapter mAdapter;
@@ -33,6 +34,8 @@ public class AlbumCoverActivity extends FragmentActivity {
 		mVisibleFragment = COVER_FRAGMENT;
 		
 		mFetchTask.execute("");
+		
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 	}
 
 	protected void setVisibleFragment(int fragment) {
@@ -69,5 +72,15 @@ public class AlbumCoverActivity extends FragmentActivity {
 
 	protected AlbumGridAdapter getAdapter() {
 		return mAdapter;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			this.finish();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 }
