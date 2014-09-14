@@ -6,10 +6,16 @@
 
     <ImageView
         android:id="@+id/ivIcon"
+        android:contentDescription="@string/icon_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
+        android:paddingStart="5dp"
+        android:paddingLeft="5dp"
+        android:paddingEnd="5dp"
+        android:paddingRight="5dp"
         android:clickable="false"
         android:focusable="false" />
 
@@ -19,9 +25,13 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_toRightOf="@id/ivIcon"
+        android:layout_toEndOf="@id/ivIcon"
         android:clickable="false"
         android:focusable="false"
+        android:paddingStart="10dp"
         android:paddingLeft="10dp"
+        android:paddingEnd="10dp"
+        android:paddingRight="10dp"
         android:text="@string/empty" />
 
     <CheckBox
@@ -29,6 +39,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:focusable="false"
         android:text="@string/empty" />

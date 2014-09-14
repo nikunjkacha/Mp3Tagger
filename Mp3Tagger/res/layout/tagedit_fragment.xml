@@ -43,8 +43,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:inputType="text"
-                    android:selectAllOnFocus="true"
-                    android:padding="10dp" />
+                    android:padding="10dp"
+                    android:selectAllOnFocus="true" />
 
                 <CheckBox
                     android:id="@+id/cbTitle"
@@ -75,8 +75,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:inputType="text"
-                    android:selectAllOnFocus="true"
-                    android:padding="10dp" />
+                    android:padding="10dp"
+                    android:selectAllOnFocus="true" />
 
                 <CheckBox
                     android:id="@+id/cbArtist"
@@ -107,11 +107,43 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:inputType="text"
-                    android:selectAllOnFocus="true"
-                    android:padding="10dp" />
+                    android:padding="10dp"
+                    android:selectAllOnFocus="true" />
 
                 <CheckBox
                     android:id="@+id/cbAlbum"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:text="@string/empty" />
+            </LinearLayout>
+
+            <!-- Elements for Album Artist Field Input -->
+
+            <TextView
+                android:id="@+id/tvAlbumArtist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:paddingTop="20dp"
+                android:text="@string/tvAlbumArtistContent" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <EditText
+                    android:id="@+id/etAlbumArtist"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="text"
+                    android:padding="10dp"
+                    android:selectAllOnFocus="true" />
+
+                <CheckBox
+                    android:id="@+id/cbAlbumArtist"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="5dp"
@@ -139,8 +171,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:inputType="text"
-                    android:selectAllOnFocus="true"
-                    android:padding="10dp" />
+                    android:padding="10dp"
+                    android:selectAllOnFocus="true" />
 
                 <CheckBox
                     android:id="@+id/cbComposer"
@@ -224,8 +256,8 @@
                         <Spinner
                             android:id="@+id/spGenre"
                             android:layout_width="0dp"
-                            android:layout_weight="1"
                             android:layout_height="wrap_content"
+                            android:layout_weight="1"
                             android:padding="10dp" />
 
                         <CheckBox
@@ -235,15 +267,46 @@
                             android:padding="5dp"
                             android:text="@string/empty" />
                     </LinearLayout>
+
+                    <!-- Elements for the year input field -->
+
+                    <TextView
+                        android:id="@+id/tvYear"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5dp"
+                        android:text="@string/tvYearContent" />
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" >
+
+                        <EditText
+                            android:id="@+id/etYear"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:inputType="number"
+                            android:padding="10dp"
+                            android:selectAllOnFocus="true" />
+
+                        <CheckBox
+                            android:id="@+id/cbYear"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="5dp"
+                            android:text="@string/empty" />
+                    </LinearLayout>
                 </LinearLayout>
 
                 <!-- Image Button for changing to the Cover Tab -->
-                
+
                 <RelativeLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1" >
-                    
+
                     <TextView
                         android:id="@+id/tvCover"
                         android:layout_width="wrap_content"

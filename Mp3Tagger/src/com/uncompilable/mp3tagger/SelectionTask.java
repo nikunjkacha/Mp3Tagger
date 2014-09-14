@@ -31,6 +31,8 @@ public class SelectionTask extends AsyncTask<File, Integer, String> {
 
 	@Override
 	protected void onPreExecute() {
+		this.mMain.setUpdateSelectionHeader(false);
+		
 		this.mDialog.setProgress(0);
 		this.mDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 		this.mDialog.setTitle(mMain.getResources().getString(R.string.diaAddFiles));
@@ -40,9 +42,6 @@ public class SelectionTask extends AsyncTask<File, Integer, String> {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				cancel(true);
-				for (File toRemove : mAdded) { //Remove all added files on cancel
-					MainActivity.sSelectionController.removeFromSelection(toRemove);
-				}
 			}
 		});
 		
@@ -78,5 +77,17 @@ public class SelectionTask extends AsyncTask<File, Integer, String> {
 	@Override
 	protected void onPostExecute(String result) {
 		this.mDialog.hide();
+		
+		this.mMain.setUpdateSelectionHeader(true);
+	}
+	
+	@Override
+	protected void onCancelled() {
+		for (File toRemove : mAdded) { //Remove all added files on cancel
+			MainActivity.sSelectionController.removeFromSelection(toRemove);
+		}
+		
+		this.mMain.setUpdateSelectionHeader(true);
+
 	}
 }

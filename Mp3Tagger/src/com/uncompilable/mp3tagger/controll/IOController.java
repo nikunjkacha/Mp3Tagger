@@ -60,7 +60,8 @@ public class IOController {
 			resultTag.setTrack(fileTag.getTrack());
 			resultTag.setGenre(fileTag.getGenre());
 			resultTag.setGenreDescription(fileTag.getGenreDescription());
-
+			resultTag.setYear(fileTag.getYear());
+			
 			return resultTag;
 		} else {
 			return new ID3v24Tag();

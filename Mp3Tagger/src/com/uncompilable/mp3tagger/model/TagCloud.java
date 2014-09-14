@@ -115,6 +115,8 @@ public class TagCloud extends Observable {
 		if (validValue(tag.getComposer		  ())) mFrameValueMap.get(Id3Frame.COMPOSER    ).add(tag.getComposer		());
 		if (validValue(tag.getGenreDescription())) mFrameValueMap.get(Id3Frame.GENRE       ).add(tag.getGenreDescription());
 		if (validValue(tag.getTrack			  ())) mFrameValueMap.get(Id3Frame.TRACK_NUMBER).add(tag.getTrack			());
+		if (validValue(tag.getYear			  ())) mFrameValueMap.get(Id3Frame.YEAR		   ).add(tag.getYear			());
+		if (validValue(tag.getAlbumArtist	  ())) mFrameValueMap.get(Id3Frame.ALBUM_ARTIST).add(tag.getAlbumArtist		());
 		
 		setChanged();
 		notifyObservers();
@@ -131,11 +133,14 @@ public class TagCloud extends Observable {
 		
 		//Adjust the frameValueMap
 		if (validValue(tag.getTitle   		  ())) mFrameValueMap.get(Id3Frame.TITLE       ).remove(tag.getTitle    	    ());
-		if (validValue(tag.getArtist  		  ())) mFrameValueMap.get(Id3Frame.ARTIST      ).remove(tag.getArtist  		()); 
-		if (validValue(tag.getAlbum   		  ())) mFrameValueMap.get(Id3Frame.ALBUM_TITLE ).remove(tag.getAlbum   		());
-		if (validValue(tag.getComposer		  ())) mFrameValueMap.get(Id3Frame.COMPOSER    ).remove(tag.getComposer		());
-		if (validValue(tag.getGenreDescription())) mFrameValueMap.get(Id3Frame.GENRE       ).remove(tag.getGenreDescription());
+		if (validValue(tag.getArtist  		  ())) mFrameValueMap.get(Id3Frame.ARTIST      ).remove(tag.getArtist  			()); 
+		if (validValue(tag.getAlbum   		  ())) mFrameValueMap.get(Id3Frame.ALBUM_TITLE ).remove(tag.getAlbum   			());
+		if (validValue(tag.getComposer		  ())) mFrameValueMap.get(Id3Frame.COMPOSER    ).remove(tag.getComposer			());
+		if (validValue(tag.getGenreDescription())) mFrameValueMap.get(Id3Frame.GENRE       ).remove(tag.getGenreDescription ());
 		if (validValue(tag.getTrack			  ())) mFrameValueMap.get(Id3Frame.TRACK_NUMBER).remove(tag.getTrack			());
+		if (validValue(tag.getYear			  ())) mFrameValueMap.get(Id3Frame.YEAR		   ).remove(tag.getYear				());
+		if (validValue(tag.getAlbumArtist	  ())) mFrameValueMap.get(Id3Frame.ALBUM_ARTIST).remove(tag.getAlbumArtist		());
+		
 		
 		setChanged();
 		notifyObservers();
@@ -164,6 +169,12 @@ public class TagCloud extends Observable {
 			}
 			if ((mSelectedFields & Id3Frame.TRACK_NUMBER.getSelectionValue()) != 0) {
 				tag.setTrack((String) mFrameValueMap.get(Id3Frame.TRACK_NUMBER).toArray()[0]);
+			}
+			if ((mSelectedFields & Id3Frame.YEAR.getSelectionValue()) != 0) {
+				tag.setTrack((String) mFrameValueMap.get(Id3Frame.YEAR).toArray()[0]);
+			}
+			if ((mSelectedFields & Id3Frame.ALBUM_ARTIST.getSelectionValue()) != 0) {
+				tag.setTrack((String) mFrameValueMap.get(Id3Frame.ALBUM_ARTIST).toArray()[0]);
 			}
 		}
 	}

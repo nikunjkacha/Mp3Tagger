@@ -36,16 +36,19 @@
     <string name="tvTracknumberContent">Number</string>
     <string name="tvGenreContent">Genre</string>
     <string name="tvCoverContent">Album Cover</string>
+    <string name="tvAlbumArtistContent">Album Artist</string>
+    <string name="tvYearContent">Year</string>
     <string name="btnSaveTagsLabel">Save Tags</string>
     <string name="btnSaveCoverLabel">Save Selected Cover</string>
     <string name="noValues">[None]</string>
     <string name="multipleValues">[Multiple]</string>
     <string name="hello_world">Hello world!</string>
-    <string name="diaAddFiles">Reading Files...</string>
-    <string name="diaSaveFiles">Saving Files...</string>
+    <string name="diaAddFiles">Reading Files&#8230;</string>
+    <string name="diaSaveFiles">Saving Files&#8230;</string>
     <string name="coverAlert_title">Alert</string>
     <string name="coverAlert">The current selection contains multiple folders. Write cover file in every folder?</string>
     <string name="coverError">An Error occurred while retrieving images. Try again?</string>
     <string name="title_activity_album_cover">Select Album Cover</string>
 
+    <string name="icon_description">Graphical Icon that adds visual feedback as for the type of the Filelist entry (directory or mp3-file)</string>
 </resources>

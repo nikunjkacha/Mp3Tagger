@@ -42,6 +42,8 @@ public class TagEditFragment extends Fragment {
 	private EditText mEtArtist;
 	private EditText mEtAlbum;
 	private EditText mEtComposer;
+	private EditText mEtYear;
+	private EditText mEtAlbumArtist;
 
 	private NumberPicker mNpTrack;
 	private Spinner mSpGenre;
@@ -52,6 +54,8 @@ public class TagEditFragment extends Fragment {
 	private CheckBox mCbComposer;
 	private CheckBox mCbTrack;
 	private CheckBox mCbGenre;
+	private CheckBox mCbYear;
+	private CheckBox mCbAlbumArtist;
 
 	private ImageButton mBtnCover;
 	private Button mBtnSave;
@@ -80,17 +84,21 @@ public class TagEditFragment extends Fragment {
 	}
 	
 	private void bindViews(View root) {
-		mEtTitle 	= (EditText) root.findViewById(R.id.etTitle   );
-		mEtArtist  	= (EditText) root.findViewById(R.id.etArtist  );
-		mEtAlbum    = (EditText) root.findViewById(R.id.etAlbum   );
-		mEtComposer = (EditText) root.findViewById(R.id.etComposer);
+		mEtTitle 	   = (EditText) root.findViewById(R.id.etTitle   	);
+		mEtArtist  	   = (EditText) root.findViewById(R.id.etArtist  	);
+		mEtAlbum       = (EditText) root.findViewById(R.id.etAlbum   	);
+		mEtComposer    = (EditText) root.findViewById(R.id.etComposer	);
+		mEtYear		   = (EditText) root.findViewById(R.id.etYear    	);
+		mEtAlbumArtist = (EditText) root.findViewById(R.id.etAlbumArtist);
 
-		mCbTitle 	= (CheckBox) root.findViewById(R.id.cbTitle   );
-		mCbArtist  	= (CheckBox) root.findViewById(R.id.cbArtist  );
-		mCbAlbum    = (CheckBox) root.findViewById(R.id.cbAlbum   );
-		mCbComposer = (CheckBox) root.findViewById(R.id.cbComposer);
-		mCbTrack    = (CheckBox) root.findViewById(R.id.cbTracknumber);
-		mCbGenre    = (CheckBox) root.findViewById(R.id.cbGenre);
+		mCbTitle 	   = (CheckBox) root.findViewById(R.id.cbTitle   	 );
+		mCbArtist  	   = (CheckBox) root.findViewById(R.id.cbArtist  	 );
+		mCbAlbum       = (CheckBox) root.findViewById(R.id.cbAlbum   	 );
+		mCbComposer    = (CheckBox) root.findViewById(R.id.cbComposer	 );
+		mCbTrack       = (CheckBox) root.findViewById(R.id.cbTracknumber );
+		mCbGenre       = (CheckBox) root.findViewById(R.id.cbGenre		 );
+		mCbYear 	   = (CheckBox) root.findViewById(R.id.cbYear		 );
+		mCbAlbumArtist = (CheckBox) root.findViewById(R.id.cbAlbumArtist );
 
 		mNpTrack = (NumberPicker) root.findViewById(R.id.npTracknumber);
 		mSpGenre = (Spinner) root.findViewById(R.id.spGenre);
@@ -118,6 +126,14 @@ public class TagEditFragment extends Fragment {
 
 		itemListener = new ItemListener(cloud, Id3Frame.COMPOSER); 
 		mEtComposer.addTextChangedListener(itemListener);
+		mCbComposer.setOnClickListener(checkListener);
+		
+		itemListener = new ItemListener(cloud, Id3Frame.YEAR);
+		mEtYear.addTextChangedListener(itemListener);
+		mCbComposer.setOnClickListener(checkListener);
+		
+		itemListener = new ItemListener(cloud, Id3Frame.ALBUM_ARTIST);
+		mEtAlbumArtist.addTextChangedListener(itemListener);
 		mCbComposer.setOnClickListener(checkListener);
 		
 		mCbTrack.setOnClickListener(checkListener);
@@ -208,12 +224,14 @@ public class TagEditFragment extends Fragment {
 		Collection<String> currentFrame;
 
 		//Fill the EditTexts with the tag value
-		currentFrame = tags.getValues(Id3Frame.TITLE	  ); fillWidget(currentFrame, mEtTitle	);
-		currentFrame = tags.getValues(Id3Frame.ARTIST	  ); fillWidget(currentFrame, mEtArtist	);
-		currentFrame = tags.getValues(Id3Frame.ALBUM_TITLE); fillWidget(currentFrame, mEtAlbum	);
-		currentFrame = tags.getValues(Id3Frame.COMPOSER	  ); fillWidget(currentFrame, mEtComposer);
+		currentFrame = tags.getValues(Id3Frame.TITLE	   ); fillWidget(currentFrame, mEtTitle	 	 );
+		currentFrame = tags.getValues(Id3Frame.ARTIST	   ); fillWidget(currentFrame, mEtArtist	 );
+		currentFrame = tags.getValues(Id3Frame.ALBUM_TITLE ); fillWidget(currentFrame, mEtAlbum	 	 );
+		currentFrame = tags.getValues(Id3Frame.COMPOSER	   ); fillWidget(currentFrame, mEtComposer	 );
+		currentFrame = tags.getValues(Id3Frame.YEAR		   ); fillWidget(currentFrame, mEtYear		 );
+		currentFrame = tags.getValues(Id3Frame.ALBUM_ARTIST); fillWidget(currentFrame, mEtAlbumArtist);
 
-		//Enable the numberpicker only if there is only one seleted file
+		//Enable the numberpicker only if there is exactly one seleted file
 		if (MainActivity.sSelectionController.getSelection().getFileSet().size() == 1) {
 			npTracknumber.setEnabled(true);
 			int track = 0;
@@ -270,21 +288,25 @@ public class TagEditFragment extends Fragment {
 		//Check the checkboxes, if the frame is currently selected by the TagMap
 		TagCloud tags = MainActivity.sSelectionController.getSelection().getTagCloud();
 
-		mCbTitle   .setChecked(tags.isSelected(Id3Frame.TITLE	   ));
-		mCbArtist  .setChecked(tags.isSelected(Id3Frame.ARTIST	   	));
-		mCbAlbum   .setChecked(tags.isSelected(Id3Frame.ALBUM_TITLE ));
-		mCbComposer.setChecked(tags.isSelected(Id3Frame.COMPOSER	));
-		mCbTrack   .setChecked(tags.isSelected(Id3Frame.TRACK_NUMBER));
-		mCbGenre   .setChecked(tags.isSelected(Id3Frame.GENRE       ));
+		mCbTitle   	  .setChecked(tags.isSelected(Id3Frame.TITLE	   ));
+		mCbArtist  	  .setChecked(tags.isSelected(Id3Frame.ARTIST	   ));
+		mCbAlbum   	  .setChecked(tags.isSelected(Id3Frame.ALBUM_TITLE ));
+		mCbComposer	  .setChecked(tags.isSelected(Id3Frame.COMPOSER	   ));
+		mCbTrack   	  .setChecked(tags.isSelected(Id3Frame.TRACK_NUMBER));
+		mCbGenre   	  .setChecked(tags.isSelected(Id3Frame.GENRE       ));
+		mCbYear		  .setChecked(tags.isSelected(Id3Frame.YEAR		   ));
+		mCbAlbumArtist.setChecked(tags.isSelected(Id3Frame.ALBUM_ARTIST));
 	}
 
 	private void saveTags() {
 		TagCloud tags = MainActivity.sSelectionController.getSelection().getTagCloud();
 
-		tags.setValue(new FrameValuePair(Id3Frame.TITLE, mEtTitle.getText().toString()));
-		tags.setValue(new FrameValuePair(Id3Frame.ARTIST, mEtArtist.getText().toString()));
-		tags.setValue(new FrameValuePair(Id3Frame.ALBUM_TITLE, mEtAlbum.getText().toString()));
-		tags.setValue(new FrameValuePair(Id3Frame.COMPOSER, mEtComposer.getText().toString()));
+		tags.setValue(new FrameValuePair(Id3Frame.TITLE,		mEtTitle.getText().toString()));
+		tags.setValue(new FrameValuePair(Id3Frame.ARTIST, 		mEtArtist.getText().toString()));
+		tags.setValue(new FrameValuePair(Id3Frame.ALBUM_TITLE, 	mEtAlbum.getText().toString()));
+		tags.setValue(new FrameValuePair(Id3Frame.COMPOSER, 	mEtComposer.getText().toString()));
+		tags.setValue(new FrameValuePair(Id3Frame.YEAR, 		mEtYear.getText().toString()));
+		tags.setValue(new FrameValuePair(Id3Frame.ALBUM_ARTIST, mEtAlbumArtist.getText().toString()));
 
 		tags.setValue(new FrameValuePair(Id3Frame.TRACK_NUMBER, mNpTrack.getValue() + ""));
 		tags.setValue(new FrameValuePair(Id3Frame.GENRE, (String) mSpGenre.getSelectedItem()));
