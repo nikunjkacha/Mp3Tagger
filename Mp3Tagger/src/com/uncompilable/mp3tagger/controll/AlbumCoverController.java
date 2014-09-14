@@ -87,6 +87,7 @@ public class AlbumCoverController {
 			Log.d(Constants.MAIN_TAG, result[i]);
 		}
 		return result;
+		
 		} catch (IOException | JSONException e) {
 			if (tries > 0) {
 				Log.w(Constants.MAIN_TAG, "Could not get Image Information. " + tries + " Tries left", e);
