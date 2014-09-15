@@ -7,6 +7,8 @@
     <string name="empty"></string>
     <string name="yes">Yes</string>
     <string name="cancel">Cancel</string>
+    <string name="error_title">Error</string>
+    <string name="confirm">OK</string>
     <string name="title_activity_settings">Settings</string>
     <string name="pref_rootDir">Root Directory</string>
     <string name="pref_rootDir_sum">Default root directory from which the file selection interface will begin</string>
@@ -49,6 +51,7 @@
     <string name="coverAlert">The current selection contains multiple folders. Write cover file in every folder?</string>
     <string name="coverError">An Error occurred while retrieving images. Try again?</string>
     <string name="title_activity_album_cover">Select Album Cover</string>
+    <string name="selectionError">Error reading files: not all files could be selected.</string>
 
     <string name="icon_description">Graphical Icon that adds visual feedback as for the type of the Filelist entry (directory or mp3-file)</string>
     <string name="refresh_description">Refresh</string>

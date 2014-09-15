@@ -21,6 +21,7 @@ public class SelectionTask extends AsyncTask<File, Integer, String> {
 	private ProgressDialog mDialog;
 	private MainActivity mMain;
 	private Collection<File> mAdded;
+	private boolean mError;
 	
 	public SelectionTask(MainActivity main) {
 		super();
@@ -32,6 +33,8 @@ public class SelectionTask extends AsyncTask<File, Integer, String> {
 	@Override
 	protected void onPreExecute() {
 		this.mMain.setUpdateSelectionHeader(false);
+		
+		this.mError = false;
 		
 		this.mDialog.setProgress(0);
 		this.mDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -62,6 +65,7 @@ public class SelectionTask extends AsyncTask<File, Integer, String> {
 			} catch (UnsupportedTagException | InvalidDataException
 					| InvalidFileException | IOException | NoTagAssociatedWithFileException e) {
 				Log.e(Constants.MAIN_TAG, "ERROR: could not add file " + file + " to Selection!", e);
+				this.mError = true;
 			}
 			
 			publishProgress(progress);
@@ -77,8 +81,18 @@ public class SelectionTask extends AsyncTask<File, Integer, String> {
 	@Override
 	protected void onPostExecute(String result) {
 		this.mDialog.hide();
-		
 		this.mMain.setUpdateSelectionHeader(true);
+		
+		if (this.mError) {
+			AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mMain);
+			dialogBuilder.setMessage(R.string.selectionError);
+			dialogBuilder.setTitle(R.string.error_title);
+
+			dialogBuilder.setPositiveButton(R.string.confirm, null);
+
+			AlertDialog dialog = dialogBuilder.create();
+			dialog.show();
+		}
 	}
 	
 	@Override
