@@ -4,62 +4,72 @@ import java.io.IOException;
 
 import org.json.JSONException;
 
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
+import android.view.View;
+
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.uncompilable.mp3tagger.utility.ObservableArray;
 
-import android.graphics.Bitmap;
-import android.os.AsyncTask;
-import android.view.View;
-
 public class CoverFetchTask extends AsyncTask<String, String, String> {
-	private AlbumCoverActivity mActivity;
+	private final AlbumCoverActivity mActivity;
 
 	private static final String SUCCESS = "success";
 	private static final String FAILURE = "failure";
 
-	protected CoverFetchTask(AlbumCoverActivity activity) {
-		this.mActivity = activity;
+	protected CoverFetchTask(final AlbumCoverActivity activity) {
+		super();
 		
-		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(mActivity).build();
+		this.mActivity = activity;
+
+		final ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this.mActivity).build();
 		ImageLoader.getInstance().init(config);
 	}
 
-	@Override 
+	@Override
 	protected void onPreExecute() {
+		//do nothing
 	}
 
 	@Override
-	protected String doInBackground(String... mes) {
+	protected String doInBackground(final String... mes) {
 		try {
-			String[] urls = MainActivity.sSelectionController.getAlbumCoverController().getAlbumImages();
+			final String[] urls = MainActivity.sSelectionController.getAlbumCoverController().getAlbumImages();
 			final ObservableArray<Bitmap> images = new ObservableArray<Bitmap>(new Bitmap[urls.length]);
-			mActivity.getAdapter().setItems(images);
+			this.mActivity.getAdapter().setItems(images);
 
 			for (int i=0; i<urls.length; i++) {
-				
+
 				final int pos = i;
 				ImageLoader.getInstance().loadImage(urls[i], new ImageLoadingListener() {
 					@Override
-					public void onLoadingComplete(String uri, View view, final Bitmap bitmap) {
-						mActivity.runOnUiThread(new Runnable() {
+					public void onLoadingComplete(final String uri, final View view, final Bitmap bitmap) {
+						CoverFetchTask.this.mActivity.runOnUiThread(new Runnable() {
+							@Override
 							public void run() {
 								images.set(pos, bitmap);
 							}
 						});
-							
+
 					}
 
 					@Override
-					public void onLoadingCancelled(String arg0, View arg1) {}
+					public void onLoadingCancelled(final String arg0, final View arg1) {
+						//Do nothing
+					}
 
 					@Override
-					public void onLoadingFailed(String arg0, View arg1, FailReason arg2) {}
+					public void onLoadingFailed(final String arg0, final View arg1, final FailReason arg2) {
+						//Do nothing
+					}
 
 					@Override
-					public void onLoadingStarted(String arg0, View arg1) {}
+					public void onLoadingStarted(final String arg0, final View arg1) {
+						//Do nothing
+					}
 				});
 
 			}
@@ -70,17 +80,17 @@ public class CoverFetchTask extends AsyncTask<String, String, String> {
 	}
 
 	@Override
-	protected void onProgressUpdate(String... values) {
-
+	protected void onProgressUpdate(final String... values) {
+		//do nothing
 	}
 
 	@Override
-	protected void onPostExecute(String result) {
+	protected void onPostExecute(final String result) {
 		if (SUCCESS.equalsIgnoreCase(result)) {
-			mActivity.setVisibleFragment(AlbumCoverActivity.COVER_FRAGMENT);
-			mActivity.getAdapter().notifyDataSetChanged();
+			this.mActivity.setVisibleFragment(AlbumCoverActivity.COVER_FRAGMENT);
+			this.mActivity.getAdapter().notifyDataSetChanged();
 		} else if (FAILURE.equalsIgnoreCase(result)) {
-			mActivity.setVisibleFragment(AlbumCoverActivity.ERROR_FRAGMENT);
+			this.mActivity.setVisibleFragment(AlbumCoverActivity.ERROR_FRAGMENT);
 		}
 	}
 }

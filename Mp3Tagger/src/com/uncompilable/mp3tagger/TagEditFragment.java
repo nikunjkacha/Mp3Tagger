@@ -3,12 +3,6 @@ package com.uncompilable.mp3tagger;
 import java.io.File;
 import java.util.Collection;
 
-import com.mpatric.mp3agic.ID3v1Genres;
-import com.uncompilable.mp3tagger.model.FrameValuePair;
-import com.uncompilable.mp3tagger.model.Id3Frame;
-import com.uncompilable.mp3tagger.model.TagCloud;
-import com.uncompilable.mp3tagger.utility.Constants;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -33,6 +27,12 @@ import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.NumberPicker.OnValueChangeListener;
 import android.widget.Spinner;
+
+import com.mpatric.mp3agic.ID3v1Genres;
+import com.uncompilable.mp3tagger.model.FrameValuePair;
+import com.uncompilable.mp3tagger.model.Id3Frame;
+import com.uncompilable.mp3tagger.model.TagCloud;
+import com.uncompilable.mp3tagger.utility.Constants;
 
 public class TagEditFragment extends Fragment {
 	private SimpleFileListAdapter mAdapter;
@@ -61,272 +61,295 @@ public class TagEditFragment extends Fragment {
 	private Button mBtnSave;
 
 	private int mCoverWidth, mCoverHeight;
+	
+	public TagEditFragment() {
+		super();
+	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View root = inflater.inflate(R.layout.tagedit_fragment, container, false);
+	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+		final View root = inflater.inflate(R.layout.tagedit_fragment, container, false);
 
-		bindViews(root);
-		
-		mNpTrack.setMinValue(0);
-		mNpTrack.setMaxValue(getResources().getInteger(R.integer.maxInput));
+		this.bindViews(root);
 
-		mSpGenre.setAdapter(new ArrayAdapter<String>(mMain, R.layout.simple_textview_item, ID3v1Genres.GENRES));
+		this.mNpTrack.setMinValue(0);
+		this.mNpTrack.setMaxValue(this.getResources().getInteger(R.integer.maxInput));
 
-		refresh();
-		addListeners();
+		this.mSpGenre.setAdapter(new ArrayAdapter<String>(this.mMain, R.layout.simple_textview_item, ID3v1Genres.GENRES));
 
-		ListView lvSelection = (ListView) root.findViewById(R.id.lvFiles);
-		lvSelection.setAdapter(mAdapter);
+		this.refresh();
+		this.addListeners();
+
+		final ListView lvSelection = (ListView) root.findViewById(R.id.lvFiles);
+		lvSelection.setAdapter(this.mAdapter);
 
 		return root;
-		
-	}
-	
-	private void bindViews(View root) {
-		mEtTitle 	   = (EditText) root.findViewById(R.id.etTitle   	);
-		mEtArtist  	   = (EditText) root.findViewById(R.id.etArtist  	);
-		mEtAlbum       = (EditText) root.findViewById(R.id.etAlbum   	);
-		mEtComposer    = (EditText) root.findViewById(R.id.etComposer	);
-		mEtYear		   = (EditText) root.findViewById(R.id.etYear    	);
-		mEtAlbumArtist = (EditText) root.findViewById(R.id.etAlbumArtist);
 
-		mCbTitle 	   = (CheckBox) root.findViewById(R.id.cbTitle   	 );
-		mCbArtist  	   = (CheckBox) root.findViewById(R.id.cbArtist  	 );
-		mCbAlbum       = (CheckBox) root.findViewById(R.id.cbAlbum   	 );
-		mCbComposer    = (CheckBox) root.findViewById(R.id.cbComposer	 );
-		mCbTrack       = (CheckBox) root.findViewById(R.id.cbTracknumber );
-		mCbGenre       = (CheckBox) root.findViewById(R.id.cbGenre		 );
-		mCbYear 	   = (CheckBox) root.findViewById(R.id.cbYear		 );
-		mCbAlbumArtist = (CheckBox) root.findViewById(R.id.cbAlbumArtist );
-
-		mNpTrack = (NumberPicker) root.findViewById(R.id.npTracknumber);
-		mSpGenre = (Spinner) root.findViewById(R.id.spGenre);
-		
-		mBtnCover = (ImageButton) root.findViewById(R.id.btnEditCover);
-		mBtnSave  = (Button) root.findViewById(R.id.btnSaveTags);
 	}
-	
+
+	private void bindViews(final View root) {
+		this.mEtTitle 	   = (EditText) root.findViewById(R.id.etTitle   	);
+		this.mEtArtist  	   = (EditText) root.findViewById(R.id.etArtist  	);
+		this.mEtAlbum       = (EditText) root.findViewById(R.id.etAlbum   	);
+		this.mEtComposer    = (EditText) root.findViewById(R.id.etComposer	);
+		this.mEtYear		   = (EditText) root.findViewById(R.id.etYear    	);
+		this.mEtAlbumArtist = (EditText) root.findViewById(R.id.etAlbumArtist);
+
+		this.mCbTitle 	   = (CheckBox) root.findViewById(R.id.cbTitle   	 );
+		this.mCbArtist  	   = (CheckBox) root.findViewById(R.id.cbArtist  	 );
+		this.mCbAlbum       = (CheckBox) root.findViewById(R.id.cbAlbum   	 );
+		this.mCbComposer    = (CheckBox) root.findViewById(R.id.cbComposer	 );
+		this.mCbTrack       = (CheckBox) root.findViewById(R.id.cbTracknumber );
+		this.mCbGenre       = (CheckBox) root.findViewById(R.id.cbGenre		 );
+		this.mCbYear 	   = (CheckBox) root.findViewById(R.id.cbYear		 );
+		this.mCbAlbumArtist = (CheckBox) root.findViewById(R.id.cbAlbumArtist );
+
+		this.mNpTrack = (NumberPicker) root.findViewById(R.id.npTracknumber);
+		this.mSpGenre = (Spinner) root.findViewById(R.id.spGenre);
+
+		this.mBtnCover = (ImageButton) root.findViewById(R.id.btnEditCover);
+		this.mBtnSave  = (Button) root.findViewById(R.id.btnSaveTags);
+	}
+
 	private void addListeners() {
 		ItemListener itemListener;
-		TagCloud cloud = MainActivity.sSelectionController.getSelection().getTagCloud();
-		CheckboxListener checkListener = new CheckboxListener(cloud, Id3Frame.TITLE);
+		final TagCloud cloud = MainActivity.sSelectionController.getSelection().getTagCloud();
+		final CheckboxListener checkListener = new CheckboxListener(cloud, Id3Frame.TITLE);
 
-		itemListener = new ItemListener(cloud, Id3Frame.TITLE); 
-		mEtTitle.addTextChangedListener(itemListener);
-		mCbTitle.setOnClickListener(checkListener);
+		itemListener = new ItemListener(cloud, Id3Frame.TITLE);
+		this.mEtTitle.addTextChangedListener(itemListener);
+		this.mCbTitle.setOnClickListener(checkListener);
 
-		itemListener = new ItemListener(cloud, Id3Frame.ARTIST);   
-		mEtArtist.addTextChangedListener(itemListener);
-		mCbArtist.setOnClickListener(checkListener);
+		itemListener = new ItemListener(cloud, Id3Frame.ARTIST);
+		this.mEtArtist.addTextChangedListener(itemListener);
+		this.mCbArtist.setOnClickListener(checkListener);
 
-		itemListener = new ItemListener(cloud, Id3Frame.ALBUM_TITLE);    
-		mEtAlbum.addTextChangedListener(itemListener);
-		mCbAlbum.setOnClickListener(checkListener);
+		itemListener = new ItemListener(cloud, Id3Frame.ALBUM_TITLE);
+		this.mEtAlbum.addTextChangedListener(itemListener);
+		this.mCbAlbum.setOnClickListener(checkListener);
 
-		itemListener = new ItemListener(cloud, Id3Frame.COMPOSER); 
-		mEtComposer.addTextChangedListener(itemListener);
-		mCbComposer.setOnClickListener(checkListener);
-		
+		itemListener = new ItemListener(cloud, Id3Frame.COMPOSER);
+		this.mEtComposer.addTextChangedListener(itemListener);
+		this.mCbComposer.setOnClickListener(checkListener);
+
 		itemListener = new ItemListener(cloud, Id3Frame.YEAR);
-		mEtYear.addTextChangedListener(itemListener);
-		mCbComposer.setOnClickListener(checkListener);
-		
+		this.mEtYear.addTextChangedListener(itemListener);
+		this.mCbComposer.setOnClickListener(checkListener);
+
 		itemListener = new ItemListener(cloud, Id3Frame.ALBUM_ARTIST);
-		mEtAlbumArtist.addTextChangedListener(itemListener);
-		mCbComposer.setOnClickListener(checkListener);
-		
-		mCbTrack.setOnClickListener(checkListener);
-		
+		this.mEtAlbumArtist.addTextChangedListener(itemListener);
+		this.mCbComposer.setOnClickListener(checkListener);
+
+		this.mCbTrack.setOnClickListener(checkListener);
+
 		final TagCloud tags = MainActivity.sSelectionController.getSelection().getTagCloud();
-		
-		mNpTrack.setOnValueChangedListener(new OnValueChangeListener() {
+
+		this.mNpTrack.setOnValueChangedListener(new OnValueChangeListener() {
 
 			@Override
-			public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+			public void onValueChange(final NumberPicker picker, final int oldVal, final int newVal) {
 				tags.setFrameSelected(Id3Frame.TRACK_NUMBER);
-				updateCheckboxes();
+				TagEditFragment.this.updateCheckboxes();
 			}
 
 		});
-		mCbGenre.setOnClickListener(checkListener);
+		this.mCbGenre.setOnClickListener(checkListener);
 
-		mSpGenre.setOnItemSelectedListener(new OnItemSelectedListener() {
+		this.mSpGenre.setOnItemSelectedListener(new OnItemSelectedListener() {
 
 			@Override
-			public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+			public void onItemSelected(final AdapterView<?> parent, final View view, final int pos, final long itemId) {
 				tags.setFrameSelected(Id3Frame.GENRE);
-				updateCheckboxes();
+				TagEditFragment.this.updateCheckboxes();
 			}
 
 			@Override
-			public void onNothingSelected(AdapterView<?> parent) {
+			public void onNothingSelected(final AdapterView<?> parent) {
 				tags.setFrameUnselected(Id3Frame.GENRE);
-				updateCheckboxes();
+				TagEditFragment.this.updateCheckboxes();
 			}
 		});
-		
-		mBtnCover.setOnClickListener(new OnClickListener() {
+
+		this.mBtnCover.setOnClickListener(new OnClickListener() {
 
 			@Override
-			public void onClick(View source) {
-				Intent coverIntent = new Intent(mMain, AlbumCoverActivity.class);
-				mMain.startActivity(coverIntent);
+			public void onClick(final View source) {
+				final Intent coverIntent = new Intent(TagEditFragment.this.mMain, AlbumCoverActivity.class);
+				TagEditFragment.this.mMain.startActivity(coverIntent);
 			}
 
 		});
-		
-		mBtnSave.setOnClickListener(new OnClickListener() {
+
+		this.mBtnSave.setOnClickListener(new OnClickListener() {
 
 			@Override
-			public void onClick(View source) {
-				saveTags();
+			public void onClick(final View source) {
+				TagEditFragment.this.saveTags();
 			}
 
 		});
 
 	}
-	
+
 	@Override
 	public void onResume() {
 		super.onResume();
-		populateWidgets();
-		updateCheckboxes();
+		this.populateWidgets();
+		this.updateCheckboxes();
 	}
 
 	@Override
-	public void onAttach(Activity activity) {
+	public void onAttach(final Activity activity) {
 		super.onAttach(activity);
 
 		this.mMain = (MainActivity) activity;
-		this.mAdapter = new SimpleFileListAdapter(mMain, new File[0]);
+		this.mAdapter = new SimpleFileListAdapter(this.mMain, new File[0]);
 	}
 
 	private void refresh() {
-		if (mAdapter != null) {
-			mAdapter.setDisplayedFiles(MainActivity.sSelectionController.
+		if (this.mAdapter != null) {
+			this.mAdapter.setDisplayedFiles(MainActivity.sSelectionController.
 					getSelection().
 					getFileSet().
 					toArray(new File[MainActivity.sSelectionController.getSelection().getFileSet().size()]));
 		}
-		if (getView() != null) {
-			populateWidgets();
-			updateCheckboxes();
+		if (this.getView() != null) {
+			this.populateWidgets();
+			this.updateCheckboxes();
 		}
 	}
 
 	private void populateWidgets() {
-		NumberPicker npTracknumber = (NumberPicker) getView().findViewById(R.id.npTracknumber);
-		Spinner spGenre = (Spinner) getView().findViewById(R.id.spGenre);
+		populateEditTexts();
+		populateNumberPicker();
+		populateSpinner();
+		populateCoverButton();
+	}
 
-		TagCloud tags = MainActivity.sSelectionController.getSelection().getTagCloud();
-
+	private void populateEditTexts() {
+		final TagCloud tags = MainActivity.sSelectionController.getSelection().getTagCloud();
 		Collection<String> currentFrame;
 
 		//Fill the EditTexts with the tag value
-		currentFrame = tags.getValues(Id3Frame.TITLE	   ); fillWidget(currentFrame, mEtTitle	 	 );
-		currentFrame = tags.getValues(Id3Frame.ARTIST	   ); fillWidget(currentFrame, mEtArtist	 );
-		currentFrame = tags.getValues(Id3Frame.ALBUM_TITLE ); fillWidget(currentFrame, mEtAlbum	 	 );
-		currentFrame = tags.getValues(Id3Frame.COMPOSER	   ); fillWidget(currentFrame, mEtComposer	 );
-		currentFrame = tags.getValues(Id3Frame.YEAR		   ); fillWidget(currentFrame, mEtYear		 );
-		currentFrame = tags.getValues(Id3Frame.ALBUM_ARTIST); fillWidget(currentFrame, mEtAlbumArtist);
-
-		//Enable the numberpicker only if there is exactly one seleted file
-		if (MainActivity.sSelectionController.getSelection().getFileSet().size() == 1) {
-			npTracknumber.setEnabled(true);
-			int track = 0;
-			if (tags.getValues(Id3Frame.TRACK_NUMBER) != null && tags.getValues(Id3Frame.TRACK_NUMBER).size() > 0) {
-				String strTrack = (String)tags.getValues(Id3Frame.TRACK_NUMBER).toArray()[0];
-				track = Integer.parseInt(strTrack.split("/")[0]);
-			}
-			npTracknumber.setValue(track);
-		} else {
-			npTracknumber.setEnabled(false);
-		}
-
-		currentFrame = tags.getValues(Id3Frame.GENRE);
-		int index = 0;
-		if (tags.getValues(Id3Frame.GENRE).size() > 0)  {
-			index = ID3v1Genres.matchGenreDescription((String)tags.getValues(Id3Frame.GENRE).toArray()[0]);
-		}
-		if (tags.getValues(Id3Frame.GENRE).size() > 1) {
-			tags.setFrameUnselected(Id3Frame.GENRE);
-		}
-		if (index < spGenre.getAdapter().getCount()) spGenre.setSelection(index < 0? 0 : index);
-
-		if (mCoverWidth <= 0) {
-			mCoverWidth = mBtnCover.getWidth(); 
-		}
-
-		if (mCoverHeight <= 0) {
-			mCoverHeight = mBtnCover.getHeight();
-		}
-
-		File coverFile = MainActivity.sSelectionController.getSelection().getTagCloud().getCoverFile();
-		if (coverFile != null && MainActivity.sSelectionController.getSelection().getTagCloud().getValues(Id3Frame.ALBUM_TITLE).size() == 1) {
-			Bitmap coverBitmap = BitmapFactory.decodeFile(coverFile.getAbsolutePath());
-			if (coverBitmap != null) { 
-				mBtnCover.setImageBitmap(Bitmap.createScaledBitmap(coverBitmap, mCoverWidth, mCoverHeight, false));
-			} else {
-				mBtnCover.setImageResource(R.drawable.ic_mp3file);
-			}
-		} else {
-			mBtnCover.setImageResource(R.drawable.ic_mp3file);
-		}
-		
-		mBtnCover.setEnabled(MainActivity.sSelectionController.getSelection().getTagCloud().getValues(Id3Frame.ALBUM_TITLE).size() == 1);
+		currentFrame = tags.getValues(Id3Frame.TITLE	   ); this.fillWidget(currentFrame, this.mEtTitle	 	 );
+		currentFrame = tags.getValues(Id3Frame.ARTIST	   ); this.fillWidget(currentFrame, this.mEtArtist	 );
+		currentFrame = tags.getValues(Id3Frame.ALBUM_TITLE ); this.fillWidget(currentFrame, this.mEtAlbum	 	 );
+		currentFrame = tags.getValues(Id3Frame.COMPOSER	   ); this.fillWidget(currentFrame, this.mEtComposer	 );
+		currentFrame = tags.getValues(Id3Frame.YEAR		   ); this.fillWidget(currentFrame, this.mEtYear		 );
+		currentFrame = tags.getValues(Id3Frame.ALBUM_ARTIST); this.fillWidget(currentFrame, this.mEtAlbumArtist);
 	}
 
-	private void fillWidget(Collection<String> values, EditText widget) {
-		int size = values.size();
-		if (size == 0) widget.setText(R.string.noValues);
-		else if (size > 1) widget.setText(R.string.multipleValues);
-		else widget.setText((String)values.toArray()[0]); 
+	private void populateNumberPicker() {
+		final TagCloud tags = MainActivity.sSelectionController.getSelection().getTagCloud();
+
+		//Enable the numberpicker only if there is exactly one seleted file
+		if (MainActivity.sSelectionController.getSelection().getFileSet().size() == Constants.ONE_ITEM) {
+			mNpTrack.setEnabled(true);
+			int track = 0;
+			if (tags.getValues(Id3Frame.TRACK_NUMBER) != null && tags.getValues(Id3Frame.TRACK_NUMBER).size() > 0) {
+				final String strTrack = (String)tags.getValues(Id3Frame.TRACK_NUMBER).toArray()[0];
+				track = Integer.parseInt(strTrack.split("/")[0]);
+			}
+			mNpTrack.setValue(track);
+		} else {
+			mNpTrack.setEnabled(false);
+		}
+	}
+
+	private void populateSpinner() {	
+		final TagCloud tags = MainActivity.sSelectionController.getSelection().getTagCloud();
+		final Collection<String> currentFrame = tags.getValues(Id3Frame.GENRE);
+		
+		int index = 0;
+		if (!currentFrame.isEmpty())  {
+			index = ID3v1Genres.matchGenreDescription((String)tags.getValues(Id3Frame.GENRE).toArray()[0]);
+		}
+		if (currentFrame.size() > Constants.ONE_ITEM) {
+			tags.setFrameUnselected(Id3Frame.GENRE);
+		}
+		if (index < mSpGenre.getAdapter().getCount()) {
+			mSpGenre.setSelection(index < 0? 0 : index);
+		}
+	}
+	
+	private void populateCoverButton() {
+		if (this.mCoverWidth <= 0) {
+			this.mCoverWidth = this.mBtnCover.getWidth();
+		}
+
+		if (this.mCoverHeight <= 0) {
+			this.mCoverHeight = this.mBtnCover.getHeight();
+		}
+
+		final File coverFile = MainActivity.sSelectionController.getSelection().getTagCloud().getCoverFile();
+		if (coverFile != null && MainActivity.sSelectionController.getSelection().getTagCloud().getValues(Id3Frame.ALBUM_TITLE).size() == 1) {
+			final Bitmap coverBitmap = BitmapFactory.decodeFile(coverFile.getAbsolutePath());
+			if (coverBitmap == null) {
+				this.mBtnCover.setImageResource(R.drawable.ic_mp3file);
+			} else {
+				this.mBtnCover.setImageBitmap(Bitmap.createScaledBitmap(coverBitmap, this.mCoverWidth, this.mCoverHeight, false));
+			}
+		} else {
+			this.mBtnCover.setImageResource(R.drawable.ic_mp3file);
+		}
+
+		this.mBtnCover.setEnabled(MainActivity.sSelectionController.getSelection().getTagCloud().getValues(Id3Frame.ALBUM_TITLE).size() == 1);
+	}
+
+	private void fillWidget(final Collection<String> values, final EditText widget) {
+		final int size = values.size();
+		if (size == 0) {
+			widget.setText(R.string.noValues);
+		} else if (size > Constants.ONE_ITEM) {
+			widget.setText(R.string.multipleValues);
+		} else {
+			widget.setText((String)values.toArray()[0]);
+		}
 	}
 
 	private void updateCheckboxes() {
 		//Check the checkboxes, if the frame is currently selected by the TagMap
-		TagCloud tags = MainActivity.sSelectionController.getSelection().getTagCloud();
+		final TagCloud tags = MainActivity.sSelectionController.getSelection().getTagCloud();
 
-		mCbTitle   	  .setChecked(tags.isSelected(Id3Frame.TITLE	   ));
-		mCbArtist  	  .setChecked(tags.isSelected(Id3Frame.ARTIST	   ));
-		mCbAlbum   	  .setChecked(tags.isSelected(Id3Frame.ALBUM_TITLE ));
-		mCbComposer	  .setChecked(tags.isSelected(Id3Frame.COMPOSER	   ));
-		mCbTrack   	  .setChecked(tags.isSelected(Id3Frame.TRACK_NUMBER));
-		mCbGenre   	  .setChecked(tags.isSelected(Id3Frame.GENRE       ));
-		mCbYear		  .setChecked(tags.isSelected(Id3Frame.YEAR		   ));
-		mCbAlbumArtist.setChecked(tags.isSelected(Id3Frame.ALBUM_ARTIST));
+		this.mCbTitle   	  .setChecked(tags.isSelected(Id3Frame.TITLE	   ));
+		this.mCbArtist  	  .setChecked(tags.isSelected(Id3Frame.ARTIST	   ));
+		this.mCbAlbum   	  .setChecked(tags.isSelected(Id3Frame.ALBUM_TITLE ));
+		this.mCbComposer	  .setChecked(tags.isSelected(Id3Frame.COMPOSER	   ));
+		this.mCbTrack   	  .setChecked(tags.isSelected(Id3Frame.TRACK_NUMBER));
+		this.mCbGenre   	  .setChecked(tags.isSelected(Id3Frame.GENRE       ));
+		this.mCbYear		  .setChecked(tags.isSelected(Id3Frame.YEAR		   ));
+		this.mCbAlbumArtist.setChecked(tags.isSelected(Id3Frame.ALBUM_ARTIST));
 	}
 
 	private void saveTags() {
-		TagCloud tags = MainActivity.sSelectionController.getSelection().getTagCloud();
+		final TagCloud tags = MainActivity.sSelectionController.getSelection().getTagCloud();
 
-		tags.setValue(new FrameValuePair(Id3Frame.TITLE,		mEtTitle.getText().toString()));
-		tags.setValue(new FrameValuePair(Id3Frame.ARTIST, 		mEtArtist.getText().toString()));
-		tags.setValue(new FrameValuePair(Id3Frame.ALBUM_TITLE, 	mEtAlbum.getText().toString()));
-		tags.setValue(new FrameValuePair(Id3Frame.COMPOSER, 	mEtComposer.getText().toString()));
-		tags.setValue(new FrameValuePair(Id3Frame.YEAR, 		mEtYear.getText().toString()));
-		tags.setValue(new FrameValuePair(Id3Frame.ALBUM_ARTIST, mEtAlbumArtist.getText().toString()));
+		tags.setValue(new FrameValuePair(Id3Frame.TITLE,		this.mEtTitle.getText().toString()));
+		tags.setValue(new FrameValuePair(Id3Frame.ARTIST, 		this.mEtArtist.getText().toString()));
+		tags.setValue(new FrameValuePair(Id3Frame.ALBUM_TITLE, 	this.mEtAlbum.getText().toString()));
+		tags.setValue(new FrameValuePair(Id3Frame.COMPOSER, 	this.mEtComposer.getText().toString()));
+		tags.setValue(new FrameValuePair(Id3Frame.YEAR, 		this.mEtYear.getText().toString()));
+		tags.setValue(new FrameValuePair(Id3Frame.ALBUM_ARTIST, this.mEtAlbumArtist.getText().toString()));
 
-		tags.setValue(new FrameValuePair(Id3Frame.TRACK_NUMBER, mNpTrack.getValue() + ""));
-		tags.setValue(new FrameValuePair(Id3Frame.GENRE, (String) mSpGenre.getSelectedItem()));
+		tags.setValue(new FrameValuePair(Id3Frame.TRACK_NUMBER, Integer.toString(this.mNpTrack.getValue())));
+		tags.setValue(new FrameValuePair(Id3Frame.GENRE, (String) this.mSpGenre.getSelectedItem()));
 
 		MainActivity.sSelectionController.getSelection().getTagCloud().writeLocalChanges();
-		
-		Collection<File> fileSet = MainActivity.sSelectionController.getSelection().getFileSet();
-		new SaveTask(mMain).execute(fileSet.toArray(new File[fileSet.size()]));
+
+		final Collection<File> fileSet = MainActivity.sSelectionController.getSelection().getFileSet();
+		new SaveTask(this.mMain).execute(fileSet.toArray(new File[fileSet.size()]));
 	}
 
 	@Override
-	public void setUserVisibleHint(boolean isVisible) {
+	public void setUserVisibleHint(final boolean isVisible) {
 		super.setUserVisibleHint(isVisible);
 		if (isVisible) {
-			
-			refresh();
-			for (Id3Frame frame : Id3Frame.values()) {
+
+			this.refresh();
+			for (final Id3Frame frame : Id3Frame.values()) {
 				MainActivity.sSelectionController.getSelection().getTagCloud().setFrameUnselected(frame);
 			}
-			updateCheckboxes();
+			this.updateCheckboxes();
 		}
 	}
 
@@ -334,19 +357,19 @@ public class TagEditFragment extends Fragment {
 		private final TagCloud tagCloud;
 		private final Id3Frame frame;
 
-		protected CheckboxListener(TagCloud cloud, Id3Frame frame) {
+		protected CheckboxListener(final TagCloud cloud, final Id3Frame frame) {
 			this.tagCloud = cloud;
 			this.frame = frame;
 		}
 
 		@Override
-		public void onClick(View source) {
+		public void onClick(final View source) {
 			if (source instanceof CheckBox) {
-				CheckBox cbSource = (CheckBox) source;
+				final CheckBox cbSource = (CheckBox) source;
 				if (cbSource.isChecked()) {
-					tagCloud.setFrameSelected(frame);
+					this.tagCloud.setFrameSelected(this.frame);
 				} else {
-					tagCloud.setFrameUnselected(frame);
+					this.tagCloud.setFrameUnselected(this.frame);
 				}
 			} else {
 				Log.w(Constants.MAIN_TAG, "Tried to invoke onClick() of ItemListener with " + source.getClass().toString());
@@ -359,33 +382,34 @@ public class TagEditFragment extends Fragment {
 		private final TagCloud tagCloud;
 		private final Id3Frame frame;
 
-		public ItemListener(TagCloud cloud, Id3Frame frame) {
+		public ItemListener(final TagCloud cloud, final Id3Frame frame) {
 			this.tagCloud = cloud;
 			this.frame = frame;
 		}
 
 		@Override
-		public void afterTextChanged(Editable source) {
-			String newString = source.toString();
-			if (newString.length() > 0) { 
-				this.tagCloud.setFrameSelected(frame);
+		public void afterTextChanged(final Editable source) {
+			final String newString = source.toString();
+			if (newString.length() > 0) {
+				this.tagCloud.setFrameSelected(this.frame);
 			} else {
-				this.tagCloud.setFrameUnselected(frame);
+				this.tagCloud.setFrameUnselected(this.frame);
 			}
-			if (newString.equals(getResources().getString(R.string.noValues)) ||
-					newString.equals(getResources().getString(R.string.multipleValues))) {
-				this.tagCloud.setFrameUnselected(frame);
+			if (newString.equals(TagEditFragment.this.getResources().getString(R.string.noValues)) ||
+					newString.equals(TagEditFragment.this.getResources().getString(R.string.multipleValues))) {
+				this.tagCloud.setFrameUnselected(this.frame);
 			}
-			updateCheckboxes();
+			TagEditFragment.this.updateCheckboxes();
 		}
 
 		@Override
-		public void beforeTextChanged(CharSequence text, int start, int count, int after) {
+		public void beforeTextChanged(final CharSequence text, final int start, final int count, final int after) {
+			//do nothing
 		}
 
 		@Override
-		public void onTextChanged(CharSequence text, int start, int count, int after) {
-
+		public void onTextChanged(final CharSequence text, final int start, final int count, final int after) {
+			//do nothing
 		}
 
 	}

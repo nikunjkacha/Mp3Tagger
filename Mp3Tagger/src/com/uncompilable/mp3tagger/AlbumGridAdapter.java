@@ -3,8 +3,6 @@ package com.uncompilable.mp3tagger;
 import java.util.Observable;
 import java.util.Observer;
 
-import com.uncompilable.mp3tagger.utility.ObservableArray;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -12,36 +10,38 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
-import android.widget.GridView;
+
+import com.uncompilable.mp3tagger.utility.ObservableArray;
 
 
 public class AlbumGridAdapter extends ArrayAdapter<Bitmap> {
 	private ObservableArray<Bitmap> mImages;
-	
+
 	private int mSelected;
 
-	protected final int NONE_SELECTED = -1; 
+	protected final int NONE_SELECTED = -1;
 
-	public AlbumGridAdapter(Context context, Bitmap[] objects) {
+	public AlbumGridAdapter(final Context context, final Bitmap[] objects) {
 		this(context, new ObservableArray<Bitmap>(objects));
 	}
 
-	public AlbumGridAdapter(Context context, ObservableArray<Bitmap> objects) {
+	public AlbumGridAdapter(final Context context, final ObservableArray<Bitmap> objects) {
 		super(context, R.layout.covergrid_item, objects.returnArray());
-		mSelected = NONE_SELECTED;
-		mImages = objects;
-	
-		registerObservableArray(mImages);
+		this.mSelected = this.NONE_SELECTED;
+		this.mImages = objects;
+
+		this.registerObservableArray(this.mImages);
 	}
-	
-	public AlbumGridAdapter(Context context) {
+
+	public AlbumGridAdapter(final Context context) {
 		this(context, new Bitmap[0]);
 	}
 
 	@Override
-	public View getView(final int position, View convertView, ViewGroup parent) {
+	public View getView(final int position, final View convertView, final ViewGroup parent) {
 		ImageView ivCover = (ImageView) convertView;
 		if (convertView == null) {
 			ivCover = new ImageView(this.getContext());
@@ -49,20 +49,20 @@ public class AlbumGridAdapter extends ArrayAdapter<Bitmap> {
 			ivCover.setPadding(10, 10, 10, 10);
 			ivCover.setLayoutParams(new GridView.LayoutParams(290,290));
 		}
-		
-		ivCover.setImageBitmap(mImages.get(position));
+
+		ivCover.setImageBitmap(this.mImages.get(position));
 
 		ivCover.setOnClickListener(new OnClickListener() {
 
 			@Override
-			public void onClick(View source) {
-				selected(position);
-				notifyDataSetChanged();
+			public void onClick(final View source) {
+				AlbumGridAdapter.this.selected(position);
+				AlbumGridAdapter.this.notifyDataSetChanged();
 			}
 
 		});
 
-		if (position == mSelected) {
+		if (position == this.mSelected) {
 			ivCover.setBackgroundColor(Color.GREEN);
 		} else {
 			ivCover.setBackgroundColor(Color.WHITE);
@@ -70,47 +70,47 @@ public class AlbumGridAdapter extends ArrayAdapter<Bitmap> {
 		return ivCover;
 	}
 
-	public void setItems(Bitmap[] items) {
+	public void setItems(final Bitmap[] items) {
 		if (this.mImages != null) {
 			this.mImages.deleteObservers();
 		}
-		this.mImages = new ObservableArray<Bitmap>(items);
-		this.registerObservableArray(mImages);
+		this.mImages = new ObservableArray<Bitmap>(items.clone());
+		this.registerObservableArray(this.mImages);
 	}
-	
-	public void setItems(ObservableArray<Bitmap> items) {
+
+	public void setItems(final ObservableArray<Bitmap> items) {
 		this.mImages.deleteObservers();
 		this.mImages = items;
-		this.registerObservableArray(mImages);
+		this.registerObservableArray(this.mImages);
 	}
 
 	@Override
 	public int getCount() {
-		return mImages == null? 0 : mImages.length();
+		return this.mImages == null? 0 : this.mImages.length();
 	}
 
-	public void selected(int pos) {
-		if (pos == mSelected) {
-			mSelected = NONE_SELECTED;
-		} else if (mImages.get(pos) != null){
+	public void selected(final int pos) {
+		if (pos == this.mSelected) {
+			this.mSelected = this.NONE_SELECTED;
+		} else if (this.mImages.get(pos) != null){
 			this.mSelected = pos;
 		}
 	}
 
 	public Bitmap getSelected() {
-		if (mSelected > getCount() - 1 || mSelected < 0) 
+		if (this.mSelected > this.getCount() - 1 || this.mSelected < 0)
 			return null;
-		return mImages.get(mSelected);
+		return this.mImages.get(this.mSelected);
 	}
-	
-	private void registerObservableArray(ObservableArray<Bitmap> array) {
+
+	private void registerObservableArray(final ObservableArray<Bitmap> array) {
 		array.addObserver(new Observer() {
 
 			@Override
-			public void update(Observable observable, Object data) {
-				notifyDataSetChanged();
+			public void update(final Observable observable, final Object data) {
+				AlbumGridAdapter.this.notifyDataSetChanged();
 			}
-			
+
 		});
 	}
 

@@ -1,0 +1,243 @@
+Found a 13 line (52 tokens) duplication in the following files: 
+Starting at line 47 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/SelectionTask.java
+Starting at line 36 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/SaveTask.java
+
+				SelectionTask.this.cancel(true);
+			}
+		});
+
+		this.mDialog.setCanceledOnTouchOutside(false);
+		this.mDialog.show();
+
+	}
+
+	@Override
+	protected String doInBackground(final File... files) {
+		this.mDialog.setMax(files.length);
+		int progress = 0;
+=====================================================================
+Found a 7 line (51 tokens) duplication in the following files: 
+Starting at line 21 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/SimpleFileListAdapter.java
+Starting at line 24 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/BrowsableFileListAdapter.java
+
+	}
+
+	@Override
+	public View getView(final int position, final View convertView, final ViewGroup parent) {
+		final View result = super.getView(position, convertView, parent);
+
+		final ImageView ivIcon = (ImageView) result.findViewById(R.id.ivIcon);
+=====================================================================
+Found a 6 line (51 tokens) duplication in the following files: 
+Starting at line 41 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/SelectionTask.java
+Starting at line 30 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/SaveTask.java
+
+		this.mDialog.setTitle(this.mMain.getResources().getString(R.string.diaAddFiles));
+
+		this.mDialog.setButton(DialogInterface.BUTTON_NEGATIVE, this.mMain.getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(final DialogInterface dialog, final int which) {
+=====================================================================
+Found a 6 line (49 tokens) duplication in the following files: 
+Starting at line 83 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/MainActivity.java
+Starting at line 99 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/MainActivity.java
+
+							actionBar.getTabAt(CustomFragmentPagerAdapter.SELECTION_FRAGMENT).setText(
+									MainActivity.this.getResources().getString(R.string.tab_selection_header) + " (" +
+											sSelectionController.getSelection().getFileSet().size() + ")");
+						}
+					});
+				}
+=====================================================================
+Found a 13 line (47 tokens) duplication in the following files: 
+Starting at line 71 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/SelectionTask.java
+Starting at line 58 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/SaveTask.java
+
+			this.publishProgress(progress);
+		}
+		return null;
+	}
+
+	@Override
+	protected void onProgressUpdate(final Integer... progress) {
+		this.mDialog.setProgress(progress[0]);
+	}
+
+	@Override
+	protected void onPostExecute(final String result) {
+		this.mDialog.hide();
+=====================================================================
+Found a 11 line (46 tokens) duplication in the following files: 
+Starting at line 19 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/SettingsActivity.java
+Starting at line 79 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/AlbumCoverActivity.java
+
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(final MenuItem item) {
+		if (item.getItemId() == android.R.id.home) {
+			this.finish();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+}
+=====================================================================
+Found a 7 line (38 tokens) duplication in the following files: 
+Starting at line 65 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/TagEditFragment.java
+Starting at line 13 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/AlbumCoverErrorFragment.java
+
+	public TagEditFragment() {
+		super();
+	}
+
+	@Override
+	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+		final View root = inflater.inflate(R.layout.tagedit_fragment, container, false);
+=====================================================================
+Found a 3 line (38 tokens) duplication in the following files: 
+Starting at line 39 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/SelectionTask.java
+Starting at line 28 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/SaveTask.java
+
+		this.mDialog.setProgress(0);
+		this.mDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+		this.mDialog.setTitle(this.mMain.getResources().getString(R.string.diaAddFiles));
+=====================================================================
+Found a 4 line (33 tokens) duplication in the following files: 
+Starting at line 116 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/model/TagCloud.java
+Starting at line 155 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/model/TagCloud.java
+
+			this.mFrameValueMap.get(Id3Frame.TITLE).add(tag.getTitle());
+		}
+		if (this.validValue(tag.getArtist())) {
+			this.mFrameValueMap.get(Id3Frame.ARTIST).add(tag.getArtist());
+=====================================================================
+Found a 4 line (33 tokens) duplication in the following files: 
+Starting at line 119 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/model/TagCloud.java
+Starting at line 158 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/model/TagCloud.java
+
+			this.mFrameValueMap.get(Id3Frame.ARTIST).add(tag.getArtist());
+		}
+		if (this.validValue(tag.getAlbum())) {
+			this.mFrameValueMap.get(Id3Frame.ALBUM_TITLE).add(tag.getAlbum());
+=====================================================================
+Found a 4 line (33 tokens) duplication in the following files: 
+Starting at line 122 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/model/TagCloud.java
+Starting at line 161 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/model/TagCloud.java
+
+			this.mFrameValueMap.get(Id3Frame.ALBUM_TITLE).add(tag.getAlbum());
+		}
+		if (this.validValue(tag.getComposer())) {
+			this.mFrameValueMap.get(Id3Frame.COMPOSER).add(tag.getComposer());
+=====================================================================
+Found a 4 line (33 tokens) duplication in the following files: 
+Starting at line 125 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/model/TagCloud.java
+Starting at line 164 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/model/TagCloud.java
+
+			this.mFrameValueMap.get(Id3Frame.COMPOSER).add(tag.getComposer());
+		}
+		if (this.validValue(tag.getGenreDescription())) {
+			this.mFrameValueMap.get(Id3Frame.GENRE).add(tag.getGenreDescription());
+=====================================================================
+Found a 4 line (33 tokens) duplication in the following files: 
+Starting at line 128 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/model/TagCloud.java
+Starting at line 167 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/model/TagCloud.java
+
+			this.mFrameValueMap.get(Id3Frame.GENRE).add(tag.getGenreDescription());
+		}
+		if (this.validValue(tag.getTrack())) {
+			this.mFrameValueMap.get(Id3Frame.TRACK_NUMBER).add(tag.getTrack());
+=====================================================================
+Found a 4 line (33 tokens) duplication in the following files: 
+Starting at line 131 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/model/TagCloud.java
+Starting at line 170 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/model/TagCloud.java
+
+			this.mFrameValueMap.get(Id3Frame.TRACK_NUMBER).add(tag.getTrack());
+		}
+		if (this.validValue(tag.getYear())) {
+			this.mFrameValueMap.get(Id3Frame.YEAR).add(tag.getYear());
+=====================================================================
+Found a 4 line (33 tokens) duplication in the following files: 
+Starting at line 134 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/model/TagCloud.java
+Starting at line 173 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/model/TagCloud.java
+
+			this.mFrameValueMap.get(Id3Frame.YEAR).add(tag.getYear());
+		}
+		if (this.validValue(tag.getAlbumArtist())) {
+			this.mFrameValueMap.get(Id3Frame.ALBUM_ARTIST).add(tag.getAlbumArtist());
+=====================================================================
+Found a 5 line (32 tokens) duplication in the following files: 
+Starting at line 67 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/TagEditFragment.java
+Starting at line 33 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/AlbumCoverFragment.java
+Starting at line 15 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/AlbumCoverErrorFragment.java
+
+	}
+
+	@Override
+	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+		final View root = inflater.inflate(R.layout.tagedit_fragment, container, false);
+=====================================================================
+Found a 8 line (32 tokens) duplication in the following files: 
+Starting at line 9 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/SettingsActivity.java
+Starting at line 34 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/MainActivity.java
+Starting at line 19 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/AlbumCoverActivity.java
+
+	public SettingsActivity() {
+		super();
+	}
+	
+	@Override
+	protected void onCreate(final Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		this.setContentView(R.layout.activity_settings);
+=====================================================================
+Found a 5 line (26 tokens) duplication in the following files: 
+Starting at line 369 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/TagEditFragment.java
+Starting at line 393 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/TagEditFragment.java
+
+				if (cbSource.isChecked()) {
+					this.tagCloud.setFrameSelected(this.frame);
+				} else {
+					this.tagCloud.setFrameUnselected(this.frame);
+				}
+=====================================================================
+Found a 2 line (25 tokens) duplication in the following files: 
+Starting at line 115 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/model/TagCloud.java
+Starting at line 154 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/model/TagCloud.java
+
+		if (this.validValue(tag.getTitle())) {
+			this.mFrameValueMap.get(Id3Frame.TITLE).add(tag.getTitle());
+=====================================================================
+Found a 1 line (25 tokens) duplication in the following files: 
+Starting at line 285 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/TagEditFragment.java
+Starting at line 296 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/TagEditFragment.java
+
+		if (coverFile != null && MainActivity.sSelectionController.getSelection().getTagCloud().getValues(Id3Frame.ALBUM_TITLE).size() == 1) {
+=====================================================================
+Found a 7 line (25 tokens) duplication in the following files: 
+Starting at line 360 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/TagEditFragment.java
+Starting at line 385 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/TagEditFragment.java
+
+		protected CheckboxListener(final TagCloud cloud, final Id3Frame frame) {
+			this.tagCloud = cloud;
+			this.frame = frame;
+		}
+
+		@Override
+		public void onClick(final View source) {
+=====================================================================
+Found a 2 line (25 tokens) duplication in the following files: 
+Starting at line 30 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/SimpleFileListAdapter.java
+Starting at line 34 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/BrowsableFileListAdapter.java
+
+		if (this.mFiles[position].equals(AbstractFileListAdapter.sPlaying)) {
+			ivIcon.setImageResource(R.drawable.ic_playing);
+=====================================================================
+Found a 3 line (25 tokens) duplication in the following files: 
+Starting at line 46 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/MainActivity.java
+Starting at line 48 of /home/dennis/git/Mp3Tagger/Mp3Tagger/src/com/uncompilable/mp3tagger/MainActivity.java
+
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
+		actionBar.addTab(actionBar.newTab().setText(this.getResources().getString(R.string.tab_selection_header)).setTabListener(this), true);

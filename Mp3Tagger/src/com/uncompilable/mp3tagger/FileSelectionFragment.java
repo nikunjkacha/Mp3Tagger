@@ -17,28 +17,27 @@ import android.widget.ListView;
  *
  */
 public class FileSelectionFragment extends Fragment {
-	private ListView mLvFiles;
 	private BrowsableFileListAdapter mListAdapter;
 
 	public FileSelectionFragment() {
 		super();
-		mListAdapter = null;
+		this.mListAdapter = null;
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		File defaultRoot = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
-		
+
 		if (!defaultRoot.exists()) {
 			defaultRoot = new File("/");
 		}
-		View root = inflater.inflate(R.layout.selection_fragment, container, false);
+		final View root = inflater.inflate(R.layout.selection_fragment, container, false);
 
-		mListAdapter = new BrowsableFileListAdapter((MainActivity)this.getActivity(), defaultRoot);
+		this.mListAdapter = new BrowsableFileListAdapter((MainActivity)this.getActivity(), defaultRoot);
 
-		mLvFiles = (ListView) root.findViewById(R.id.lvFiles);
-		mLvFiles.setAdapter(mListAdapter);
-		mLvFiles.setClickable(true);
+		final ListView lvFiles = (ListView) root.findViewById(R.id.lvFiles);
+		lvFiles.setAdapter(this.mListAdapter);
+		lvFiles.setClickable(true);
 
 		return root;
 	}

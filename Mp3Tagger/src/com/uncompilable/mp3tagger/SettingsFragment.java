@@ -5,9 +5,14 @@ import android.preference.PreferenceFragment;
 
 public class SettingsFragment extends PreferenceFragment {
 	
-	public void onCreate(Bundle savedInstanceState) {
+	public SettingsFragment() {
+		super();
+	}
+
+	@Override
+	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		addPreferencesFromResource(R.xml.preferences);
+		this.addPreferencesFromResource(R.xml.preferences);
 	}
 
 }

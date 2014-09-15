@@ -9,6 +9,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import android.content.SharedPreferences;
+
 import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.UnsupportedTagException;
 import com.uncompilable.mp3tagger.error.InvalidFileException;
@@ -17,87 +19,87 @@ import com.uncompilable.mp3tagger.model.FileSelection;
 import com.uncompilable.mp3tagger.model.Id3Frame;
 import com.uncompilable.mp3tagger.utility.Constants;
 
-import android.content.SharedPreferences;
-
 public class SelectionController {
 	private final IOController mIOController;
 	private final FileSelection mSelection;
 	private final AlbumCoverController mAlbumController;
 
-	final FileFilter mp3Filter;
-	final FileFilter mp3OrDirectoryFilter;
+	private final FileFilter mp3Filter;
+	private final FileFilter mp3OrDirectoryFilter;
 
 
 	private final SharedPreferences mPreferences;
 
 	public static final String[] COVER_NAMES = new String[] {"AlbumArt.jpg", "cover.jpg"};
 
-	public SelectionController(SharedPreferences prefs) {
+	public SelectionController(final SharedPreferences prefs) {
 		super();
 
-		mIOController = new IOController(this);
-		mAlbumController = new AlbumCoverController(this);
+		this.mIOController = new IOController(this);
+		this.mAlbumController = new AlbumCoverController(this);
 
-		mSelection = new FileSelection();
+		this.mSelection = new FileSelection();
 
 		this.mPreferences = prefs;
 
 
-		mp3Filter = new FileFilter() {
+		this.mp3Filter = new FileFilter() {
 			@Override
-			public boolean accept(File file) {
+			public boolean accept(final File file) {
 				return file != null && file.isFile() && file.getName().endsWith(".mp3");
 			}
 		};
 
-		mp3OrDirectoryFilter = new FileFilter() {
+		this.mp3OrDirectoryFilter = new FileFilter() {
 			@Override
-			public boolean accept(File file) {
-				return file != null && (file.isDirectory() || mp3Filter.accept(file));
+			public boolean accept(final File file) {
+				return file != null && (file.isDirectory() || SelectionController.this.mp3Filter.accept(file));
 			}
 		};
 	}
 
-	public void addToSelection(File file) throws InvalidFileException, IOException, NoTagAssociatedWithFileException, UnsupportedTagException, InvalidDataException {
-		for (File toAdd : scanDirectory(file)) {
-			mSelection.addFile(toAdd, mIOController.readFile(toAdd));
+	public void addToSelection(final File file) throws InvalidFileException, IOException, NoTagAssociatedWithFileException, UnsupportedTagException, InvalidDataException {
+		for (final File toAdd : this.scanDirectory(file)) {
+			this.mSelection.addFile(toAdd, this.mIOController.readFile(toAdd));
 		}
-		
-		scanForCovers();
+
+		this.scanForCovers();
 	}
 
-	public void removeFromSelection(File file) {
-		for (File toRemove : scanDirectory(file)) {
-			mSelection.removeFile(toRemove);
+	public void removeFromSelection(final File file) {
+		for (final File toRemove : this.scanDirectory(file)) {
+			this.mSelection.removeFile(toRemove);
 		}
-		
-		scanForCovers();
+
+		this.scanForCovers();
 	}
 
 	private void scanForCovers() {
-		if (mSelection.getTagCloud().getValues(Id3Frame.ALBUM_TITLE).size() != 1) {
-			mSelection.getTagCloud().setCoverFile(null);
+		if (this.mSelection.getTagCloud().getValues(Id3Frame.ALBUM_TITLE).size() != Constants.ONE_ITEM) {
+			this.mSelection.getTagCloud().setCoverFile(null);
 		}
-		
-		Set<File> directories = new HashSet<File>();
-		for (File file : mSelection.getFileSet()) {
+
+		final Set<File> directories = new HashSet<File>();
+		for (final File file : this.mSelection.getFileSet()) {
 			directories.add(file.getParentFile());
 		}
 
-		for (File dir : directories) {
-			if (!dir.isDirectory()) break;
+		for (final File dir : directories) {
+			if (!dir.isDirectory()) {
+				break;
+			}
 
-			for (File file : dir.listFiles()) {
-				for (String name : COVER_NAMES) {
+			for (final File file : dir.listFiles()) {
+				for (final String name : COVER_NAMES) {
 					if (name.equalsIgnoreCase(file.getName())) {
-						mSelection.getTagCloud().setCoverFile(file);
+						this.mSelection.getTagCloud().setCoverFile(file);
 						return;
 					}
 				}
 			}
 		}
-		
-		mSelection.getTagCloud().setCoverFile(null);
+
+		this.mSelection.getTagCloud().setCoverFile(null);
 	}
 
 	public SharedPreferences getPrefs() {
@@ -113,27 +115,27 @@ public class SelectionController {
 	}
 
 	public FileSelection getSelection() {
-		return mSelection;
+		return this.mSelection;
 	}
 
 
-	public List<File> scanDirectory(File file) {
-		return scanDirectory(file, Integer.parseInt(mPreferences.getString(Constants.PREF_KEY_RECURSION, "5")));
+	public List<File> scanDirectory(final File file) {
+		return this.scanDirectory(file, Integer.parseInt(this.mPreferences.getString(Constants.PREF_KEY_REC, "5")));
 	}
 
-	private List<File> scanDirectory(File file, int n) {
-		List<File> result = new ArrayList<File>();
-		if (file.isFile() && mp3Filter.accept(file)) {
+	private List<File> scanDirectory(final File file, final int n) {
+		final List<File> result = new ArrayList<File>();
+		if (file.isFile() && this.mp3Filter.accept(file)) {
 			result.add(file);
 		} else if (n > 0 && file.isDirectory()) {
-			result.addAll(Arrays.asList(file.listFiles(mp3OrDirectoryFilter)));
-			List<File> toAdd = new ArrayList<File>();
-			List<File> toRemove = new ArrayList<File>();
+			result.addAll(Arrays.asList(file.listFiles(this.mp3OrDirectoryFilter)));
+			final List<File> toAdd = new ArrayList<File>();
+			final List<File> toRemove = new ArrayList<File>();
 
-			for (File subItem : result) {
+			for (final File subItem : result) {
 				if (subItem.isDirectory()) {
 					toRemove.add(subItem);
-					toAdd.addAll(scanDirectory(subItem, n-1));
+					toAdd.addAll(this.scanDirectory(subItem, n-1));
 				}
 			}
 

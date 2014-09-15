@@ -3,7 +3,6 @@ package com.uncompilable.mp3tagger.controll;
 import java.io.File;
 import java.io.IOException;
 
-import android.media.Image;
 import android.util.Log;
 
 import com.mpatric.mp3agic.ID3v1;
@@ -23,13 +22,13 @@ import com.uncompilable.mp3tagger.utility.Constants;
  *
  */
 public class IOController {
-	final SelectionController mSelectionController;
+	private final SelectionController mSelectionController;
 
 	/**
 	 * Initializes a new IOController
 	 * @param selectionController - The associated SelectionController
 	 */
-	public IOController(SelectionController selectionController) {
+	public IOController(final SelectionController selectionController) {
 		super();
 
 		this.mSelectionController = selectionController;
@@ -42,17 +41,17 @@ public class IOController {
 	 * @throws IOException
 	 * @throws TagException
 	 * @throws NoTagAssociatedWithFileException
-	 * @throws InvalidDataException 
-	 * @throws UnsupportedTagException 
-	 * @throws CannotReadException 
+	 * @throws InvalidDataException
+	 * @throws UnsupportedTagException
+	 * @throws CannotReadException
 	 */
-	public ID3v2 readFile(File file) throws IOException, NoTagAssociatedWithFileException, UnsupportedTagException, InvalidDataException {
-		Mp3File mp3 = new Mp3File(file.getAbsolutePath(), false);
-		if (mp3.hasId3v2Tag()) {
+	public ID3v2 readFile(final File file) throws IOException, NoTagAssociatedWithFileException, UnsupportedTagException, InvalidDataException {
+		final Mp3File mp3 = new Mp3File(file.getAbsolutePath(), false);
+		if (mp3.hasId3v2Tag())
 			return mp3.getId3v2Tag();
-		} else if (mp3.hasId3v1Tag()) {
-			ID3v1 fileTag = mp3.getId3v1Tag();
-			ID3v2 resultTag = new ID3v24Tag();
+		else if (mp3.hasId3v1Tag()) {
+			final ID3v1 fileTag = mp3.getId3v1Tag();
+			final ID3v2 resultTag = new ID3v24Tag();
 
 			resultTag.setTitle(fileTag.getTitle());
 			resultTag.setArtist(fileTag.getArtist());
@@ -61,46 +60,45 @@ public class IOController {
 			resultTag.setGenre(fileTag.getGenre());
 			resultTag.setGenreDescription(fileTag.getGenreDescription());
 			resultTag.setYear(fileTag.getYear());
-			
+
 			return resultTag;
-		} else {
+		} else
 			return new ID3v24Tag();
-		}
 	}
 
 	/**
 	 * Writes changes in the TagCloud into the files
 	 * @throws IOException
-	 * @throws InvalidDataException 
-	 * @throws UnsupportedTagException 
-	 * @throws NotSupportedException 
+	 * @throws InvalidDataException
+	 * @throws UnsupportedTagException
+	 * @throws NotSupportedException
 	 * @throws TagException
 	 */
-	public void writeTags(File file) throws IOException, UnsupportedTagException, InvalidDataException, NotSupportedException {
-		String path = file.getCanonicalPath();
+	public void writeTags(final File file) throws IOException, UnsupportedTagException, InvalidDataException, NotSupportedException {
+		final String path = file.getCanonicalPath();
 		Log.d(Constants.MAIN_TAG, "Writing file " + path);
-		
+
 		long time = System.currentTimeMillis();
-		Mp3File mp3 = new Mp3File(file.getAbsolutePath(), false);
+		final Mp3File mp3 = new Mp3File(file.getAbsolutePath(), false);
 		long deltaTime = System.currentTimeMillis() - time;
 		Log.d(Constants.MAIN_TAG, "Opened original mp3-File (" + deltaTime + "ms)");
-		
-		ID3v2 tag = mSelectionController.getSelection().getTagCloud().getTagMap().get(file);
+
+		final ID3v2 tag = this.mSelectionController.getSelection().getTagCloud().getTagMap().get(file);
 		mp3.setId3v2Tag(tag);
 		if (mp3.hasId3v1Tag()) {
 			mp3.removeId3v1Tag();
 		}
-		
+
 		time = System.currentTimeMillis();
 		mp3.save(path + "_temp.mp3");
 		deltaTime = System.currentTimeMillis() - time;
 		Log.d(Constants.MAIN_TAG,  "Wrote mp3-File (" + deltaTime + "ms)");
-		
+
 		time = System.currentTimeMillis();
-		boolean deleted = file.delete();
+		final boolean deleted = file.delete();
 		deltaTime = System.currentTimeMillis() - time;
 		Log.d(Constants.MAIN_TAG, "Deleted original file (" + deltaTime + "ms)");
-		
+
 		if (deleted) {
 			time = System.currentTimeMillis();
 			new File(path + "_temp.mp3").renameTo(new File(path));
@@ -109,9 +107,5 @@ public class IOController {
 		} else {
 			new File(path + "_temp.mp3").delete();
 		}
-	}
-
-	public void writeAlbumCover(Image cover) {
-
 	}
 }

@@ -7,8 +7,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 
-import com.uncompilable.mp3tagger.utility.Constants;
-
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -22,18 +20,20 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import com.uncompilable.mp3tagger.utility.Constants;
+
 public abstract class AbstractFileListAdapter extends ArrayAdapter<File> {
 	protected static MediaPlayer sPlayer = new MediaPlayer();
-	protected static File sPlaying = null;
+	protected static File sPlaying;
 
 	protected final MainActivity mMain;
 
 	protected File[] mFiles;
 
-	public AbstractFileListAdapter(MainActivity main, File[] files) {
+	public AbstractFileListAdapter(final MainActivity main, final File[] files) {
 		super(main, R.layout.list_item, files);
 
-		setDisplayedFiles(files);
+		this.setDisplayedFiles(files);
 
 		this.mMain = main;
 	}
@@ -43,31 +43,31 @@ public abstract class AbstractFileListAdapter extends ArrayAdapter<File> {
 		View result = convertView;
 
 		if (convertView == null) {
-			LayoutInflater inflater = (LayoutInflater)this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			final LayoutInflater inflater = (LayoutInflater)this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			result = inflater.inflate(R.layout.list_item, parent, false);
 		}
 
 		final TextView  tvName      = (TextView ) result.findViewById(R.id.tvFilename);
 		final CheckBox  cbSelected  = (CheckBox ) result.findViewById(R.id.cbSelected);
 
-		ItemClickListener listener = new ItemClickListener(mFiles[position], this);
+		final ItemClickListener listener = new ItemClickListener(this.mFiles[position], this);
 		result.setOnClickListener(listener);
-		tvName.setText(mFiles[position].getName());
+		tvName.setText(this.mFiles[position].getName());
 
-		if (mFiles[position].isDirectory() && "..".equals(mFiles[position].getName())) {
-			cbSelected.setVisibility(View.INVISIBLE);;
+		if (this.mFiles[position].isDirectory() && Constants.SUPER_DIR.equals(this.mFiles[position].getName())) {
+			cbSelected.setVisibility(View.INVISIBLE);
 		} else {
 			cbSelected.setVisibility(View.VISIBLE);
-			cbSelected.setChecked(MainActivity.sSelectionController.getSelection().contains(mFiles[position]));
+			cbSelected.setChecked(MainActivity.sSelectionController.getSelection().contains(this.mFiles[position]));
 			cbSelected.setOnClickListener(new OnClickListener() {
 
 				@Override
-				public void onClick(View source) {
+				public void onClick(final View source) {
 					if (cbSelected.isChecked()) {
-						Collection<File> files = MainActivity.sSelectionController.scanDirectory(mFiles[position]);
-						new SelectionTask(mMain).execute(files.toArray(new File[files.size()]));
+						final Collection<File> files = MainActivity.sSelectionController.scanDirectory(AbstractFileListAdapter.this.mFiles[position]);
+						new SelectionTask(AbstractFileListAdapter.this.mMain).execute(files.toArray(new File[files.size()]));
 					} else {
-						MainActivity.sSelectionController.removeFromSelection(mFiles[position]);
+						MainActivity.sSelectionController.removeFromSelection(AbstractFileListAdapter.this.mFiles[position]);
 					}
 				}
 			});
@@ -77,22 +77,22 @@ public abstract class AbstractFileListAdapter extends ArrayAdapter<File> {
 
 
 	public void setDisplayedFiles(final File[] files) {
-		mFiles = files.clone();
+		this.mFiles = files.clone();
 
 		//Sort entries: directory before files, compare same types by name
-		Arrays.sort(mFiles, new Comparator<File>() {
+		Arrays.sort(this.mFiles, new Comparator<File>() {
 			@Override
-			public int compare(File file1, File file2) {
+			public int compare(final File file1, final File file2) {
 				if (file1.isDirectory() && file2.isFile()) return -1;
 				if (file1.isFile() && file2.isDirectory()) return 1;
 				return file1.getName().compareTo(file2.getName());
 			}
 		});
-		notifyDataSetChanged();
+		this.notifyDataSetChanged();
 	}
 
 	public final File[] getDisplayedFiles() {
-		return mFiles;
+		return this.mFiles.clone();
 	}
 
 	@Override
@@ -101,21 +101,21 @@ public abstract class AbstractFileListAdapter extends ArrayAdapter<File> {
 	}
 
 	@Override
-	public boolean isEnabled(int position) {
+	public boolean isEnabled(final int position) {
 		return true;
 	}
 
 	@Override
 	public int getCount() {
-		return mFiles.length;
+		return this.mFiles.length;
 	}
 
 
 	protected class ItemClickListener implements OnClickListener {
-		private File linkedFile;
-		private AbstractFileListAdapter adapter;
+		private final File linkedFile;
+		private final AbstractFileListAdapter adapter;
 
-		protected ItemClickListener(File linkedFile, AbstractFileListAdapter adapter) {
+		protected ItemClickListener(final File linkedFile, final AbstractFileListAdapter adapter) {
 			super();
 			this.linkedFile = linkedFile;
 			this.adapter = adapter;
@@ -123,39 +123,46 @@ public abstract class AbstractFileListAdapter extends ArrayAdapter<File> {
 
 
 		@Override
-		public void onClick(View source) {
-			if (linkedFile.isFile() && linkedFile.getName().endsWith(".mp3") && 
-					PreferenceManager.getDefaultSharedPreferences(mMain).getBoolean(Constants.PREF_KEY_PLAYABLE, true)) {
-				MediaPlayer player = AbstractFileListAdapter.sPlayer;
+		public void onClick(final View source) {
+			if (this.linkedFile.isFile() && this.linkedFile.getName().endsWith(".mp3") &&
+					PreferenceManager.getDefaultSharedPreferences(AbstractFileListAdapter.this.mMain).getBoolean(Constants.PREF_KEY_PLAYABLE, true)) {
+				final MediaPlayer player = AbstractFileListAdapter.sPlayer;
 				try {
 					if (player.isPlaying()) {
 						player.stop();
 						player.reset();
 					}
-					if (!linkedFile.equals(AbstractFileListAdapter.sPlaying)) {
-						player.setDataSource(new FileInputStream(linkedFile).getFD());
+					if (this.linkedFile.equals(AbstractFileListAdapter.sPlaying)) {
+						AbstractFileListAdapter.sPlaying = null;
+					} else {
+						player.setDataSource(new FileInputStream(this.linkedFile).getFD());
 						player.prepare();
 						player.start();
 						
-						player.setOnCompletionListener(new OnCompletionListener() {
-
-							@Override
-							public void onCompletion(MediaPlayer player) {
-								sPlaying = null;
-								sPlayer.reset();
-								if (adapter != null) adapter.notifyDataSetChanged();
-							}
-							
-						});
-						AbstractFileListAdapter.sPlaying = linkedFile;
-					} else {
-						AbstractFileListAdapter.sPlaying = null;
+						player.setOnCompletionListener(completionListener);
+						AbstractFileListAdapter.sPlaying = this.linkedFile;
 					}
-					if (adapter != null) adapter.notifyDataSetChanged();
+					if (this.adapter != null) {
+						this.adapter.notifyDataSetChanged();
+					}
 				} catch (IllegalArgumentException | IllegalStateException | IOException e) {
-					Log.w(Constants.MAIN_TAG, "Could not play file " + linkedFile.getName() + ".", e);
+					Log.w(Constants.MAIN_TAG, "Could not play file " + this.linkedFile.getName() + ".", e);
 				}
 			}
 		}
+		
+		
+		private final OnCompletionListener completionListener = new OnCompletionListener() {
+			
+			@Override
+			public void onCompletion(final MediaPlayer player) {
+				sPlaying = null;
+				sPlayer.reset();
+				if (adapter != null) {
+					adapter.notifyDataSetChanged();
+				}
+			}
+		};
 	}
+	
 }

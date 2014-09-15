@@ -9,22 +9,27 @@ import android.widget.ImageButton;
 
 
 public class AlbumCoverErrorFragment extends Fragment {
+	
+	public AlbumCoverErrorFragment() {
+		super();
+	}
+	
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View root = inflater.inflate(R.layout.albumcover_error_fragment, container, false);
-		
-		ImageButton btnRefresh = (ImageButton) root.findViewById(R.id.btnRefresh);
-		
+	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+		final View root = inflater.inflate(R.layout.albumcover_error_fragment, container, false);
+
+		final ImageButton btnRefresh = (ImageButton) root.findViewById(R.id.btnRefresh);
+
 		btnRefresh.setOnClickListener(new OnClickListener() {
 
 			@Override
-			public void onClick(View source) {
-				AlbumCoverActivity parentActivity = (AlbumCoverActivity) getActivity();
+			public void onClick(final View source) {
+				final AlbumCoverActivity parentActivity = (AlbumCoverActivity) AlbumCoverErrorFragment.this.getActivity();
 				parentActivity.runFetchTask();
 			}
-			
+
 		});
-		
+
 		return root;
 	}
 

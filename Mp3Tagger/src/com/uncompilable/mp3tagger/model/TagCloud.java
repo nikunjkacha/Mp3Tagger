@@ -24,72 +24,73 @@ public class TagCloud extends Observable {
 	private final Map<File, ID3v2> mFileTagMap;
 	private final Map<Id3Frame, Multiset<String>> mFrameValueMap;
 	private File mCover;
-	
+
 	private int mSelectedFields;
 
 	/**
 	 * Creates a new TagCloud with an empty file- and tagMap
 	 */
 	protected TagCloud() {
-		mFileTagMap = new HashMap<File, ID3v2>();
-		mFrameValueMap = new EnumMap<Id3Frame, Multiset<String>>(Id3Frame.class);
+		super();
+		this.mFileTagMap = new HashMap<File, ID3v2>();
+		this.mFrameValueMap = new EnumMap<Id3Frame, Multiset<String>>(Id3Frame.class);
 
-		for (Id3Frame frame : Id3Frame.values()) {
-			mFrameValueMap.put(frame, TreeMultiset.<String>create());
+		for (final Id3Frame frame : Id3Frame.values()) {
+			this.mFrameValueMap.put(frame, TreeMultiset.<String>create());
 		}
-		
-		mSelectedFields = 0;
+
+		this.mSelectedFields = 0;
 	}
 
 	/**
 	 * Sets the value of the Id3Frame given in the FrameValuePair to the associated Value.
-	 * Careful: Deletes all values that were previously associated with this frame! 
+	 * Careful: Deletes all values that were previously associated with this frame!
 	 * @param value - The FrameValuePair containing the new Value.
 	 */
-	public void setValue(FrameValuePair value) {
-		Multiset<String> newValues = TreeMultiset.<String>create();
+	public void setValue(final FrameValuePair value) {
+		final Multiset<String> newValues = TreeMultiset.<String>create();
 		newValues.add(value.getValue());
-		mFrameValueMap.put(value.getFrame(), newValues);
-		
-		setChanged();
-		notifyObservers();
+		this.mFrameValueMap.put(value.getFrame(), newValues);
+
+		this.setChanged();
+		this.notifyObservers();
 	}
-	
+
 	/**
 	 * Returns the Collection of Values associated with an ID3Tag.
 	 * @param frame - The frame whose values are to be returned
 	 * @return - The associated values. If there are no associated values: returns an empty Collection.
 	 */
-	public Collection<String> getValues(Id3Frame frame) {
-		Collection<String> values = mFrameValueMap.get(frame).elementSet();
+	public Collection<String> getValues(final Id3Frame frame) {
+		final Collection<String> values = this.mFrameValueMap.get(frame).elementSet();
 		return values == null? new ArrayList<String>() : values;
 	}
-	
+
 	/**
-	 * Sets an Id3Frame as selected. 
+	 * Sets an Id3Frame as selected.
 	 * WriteLocalChanges() will now write this frame.
 	 * @param frame - The Frame to select
 	 */
-	public void setFrameSelected(Id3Frame frame) {
-		mSelectedFields |= frame.getSelectionValue();
+	public void setFrameSelected(final Id3Frame frame) {
+		this.mSelectedFields |= frame.getSelectionValue();
 	}
-	
+
 	/**
 	 * Sets an Id3Frame as unselected.
 	 * WriteLocalChanges() will now not write this frame.
 	 * @param frame - The Frame to unselect
 	 */
-	public void setFrameUnselected(Id3Frame frame) {
-		mSelectedFields &= (0xFFFF - frame.getSelectionValue());
+	public void setFrameUnselected(final Id3Frame frame) {
+		this.mSelectedFields &= (0xFFFF - frame.getSelectionValue());
 	}
-	
+
 	/**
 	 * Returns true if the specified frame is currently selected
 	 * @param frame
 	 * @return
 	 */
-	public boolean isSelected(Id3Frame frame) {
-		return (mSelectedFields & frame.getSelectionValue()) != 0;
+	public boolean isSelected(final Id3Frame frame) {
+		return (this.mSelectedFields & frame.getSelectionValue()) != 0;
 	}
 
 	/**
@@ -102,24 +103,42 @@ public class TagCloud extends Observable {
 	 * @throws InvalidFileException - If the file is null
 	 * @throws NoTagAssociatedWithFileException - If the tag is not valid
 	 */
-	protected void addEntry(File file, ID3v2 tag) throws InvalidFileException, NoTagAssociatedWithFileException {
+	protected void addEntry(final File file, final ID3v2 tag) throws InvalidFileException, NoTagAssociatedWithFileException {
 		if (file == null) throw new InvalidFileException();
 		if (tag == null) throw new NoTagAssociatedWithFileException();
-		if (mFileTagMap.containsKey(file)) removeEntry(file);
-		mFileTagMap.put(file, tag);
-		
+		if (this.mFileTagMap.containsKey(file)) {
+			this.removeEntry(file);
+		}
+		this.mFileTagMap.put(file, tag);
+
 		//Adjust the frameValueMap
-		if (validValue(tag.getTitle   		  ())) mFrameValueMap.get(Id3Frame.TITLE       ).add(tag.getTitle    	    ());
-		if (validValue(tag.getArtist  		  ())) mFrameValueMap.get(Id3Frame.ARTIST      ).add(tag.getArtist  		()); 
-		if (validValue(tag.getAlbum   		  ())) mFrameValueMap.get(Id3Frame.ALBUM_TITLE ).add(tag.getAlbum   		());
-		if (validValue(tag.getComposer		  ())) mFrameValueMap.get(Id3Frame.COMPOSER    ).add(tag.getComposer		());
-		if (validValue(tag.getGenreDescription())) mFrameValueMap.get(Id3Frame.GENRE       ).add(tag.getGenreDescription());
-		if (validValue(tag.getTrack			  ())) mFrameValueMap.get(Id3Frame.TRACK_NUMBER).add(tag.getTrack			());
-		if (validValue(tag.getYear			  ())) mFrameValueMap.get(Id3Frame.YEAR		   ).add(tag.getYear			());
-		if (validValue(tag.getAlbumArtist	  ())) mFrameValueMap.get(Id3Frame.ALBUM_ARTIST).add(tag.getAlbumArtist		());
-		
-		setChanged();
-		notifyObservers();
+		if (this.validValue(tag.getTitle())) {
+			this.mFrameValueMap.get(Id3Frame.TITLE).add(tag.getTitle());
+		}
+		if (this.validValue(tag.getArtist())) {
+			this.mFrameValueMap.get(Id3Frame.ARTIST).add(tag.getArtist());
+		}
+		if (this.validValue(tag.getAlbum())) {
+			this.mFrameValueMap.get(Id3Frame.ALBUM_TITLE).add(tag.getAlbum());
+		}
+		if (this.validValue(tag.getComposer())) {
+			this.mFrameValueMap.get(Id3Frame.COMPOSER).add(tag.getComposer());
+		}
+		if (this.validValue(tag.getGenreDescription())) {
+			this.mFrameValueMap.get(Id3Frame.GENRE).add(tag.getGenreDescription());
+		}
+		if (this.validValue(tag.getTrack())) {
+			this.mFrameValueMap.get(Id3Frame.TRACK_NUMBER).add(tag.getTrack());
+		}
+		if (this.validValue(tag.getYear())) {
+			this.mFrameValueMap.get(Id3Frame.YEAR).add(tag.getYear());
+		}
+		if (this.validValue(tag.getAlbumArtist())) {
+			this.mFrameValueMap.get(Id3Frame.ALBUM_ARTIST).add(tag.getAlbumArtist());
+		}
+
+		this.setChanged();
+		this.notifyObservers();
 	}
 
 	/**
@@ -127,58 +146,74 @@ public class TagCloud extends Observable {
 	 * @param file - The file to be removed
 	 * @throws InvalidFileException - If the file is null
 	 */
-	protected void removeEntry(File file) {
-		ID3v2 tag = mFileTagMap.remove(file);
+	protected void removeEntry(final File file) {
+		final ID3v2 tag = this.mFileTagMap.remove(file);
 		if (tag == null) return;
-		
+
 		//Adjust the frameValueMap
-		if (validValue(tag.getTitle   		  ())) mFrameValueMap.get(Id3Frame.TITLE       ).remove(tag.getTitle    	    ());
-		if (validValue(tag.getArtist  		  ())) mFrameValueMap.get(Id3Frame.ARTIST      ).remove(tag.getArtist  			()); 
-		if (validValue(tag.getAlbum   		  ())) mFrameValueMap.get(Id3Frame.ALBUM_TITLE ).remove(tag.getAlbum   			());
-		if (validValue(tag.getComposer		  ())) mFrameValueMap.get(Id3Frame.COMPOSER    ).remove(tag.getComposer			());
-		if (validValue(tag.getGenreDescription())) mFrameValueMap.get(Id3Frame.GENRE       ).remove(tag.getGenreDescription ());
-		if (validValue(tag.getTrack			  ())) mFrameValueMap.get(Id3Frame.TRACK_NUMBER).remove(tag.getTrack			());
-		if (validValue(tag.getYear			  ())) mFrameValueMap.get(Id3Frame.YEAR		   ).remove(tag.getYear				());
-		if (validValue(tag.getAlbumArtist	  ())) mFrameValueMap.get(Id3Frame.ALBUM_ARTIST).remove(tag.getAlbumArtist		());
-		
-		
-		setChanged();
-		notifyObservers();
+		if (this.validValue(tag.getTitle())) {
+			this.mFrameValueMap.get(Id3Frame.TITLE).remove(tag.getTitle());
+		}
+		if (this.validValue(tag.getArtist())) {
+			this.mFrameValueMap.get(Id3Frame.ARTIST).remove(tag.getArtist());
+		}
+		if (this.validValue(tag.getAlbum())) {
+			this.mFrameValueMap.get(Id3Frame.ALBUM_TITLE ).remove(tag.getAlbum());
+		}
+		if (this.validValue(tag.getComposer())) {
+			this.mFrameValueMap.get(Id3Frame.COMPOSER).remove(tag.getComposer());
+		}
+		if (this.validValue(tag.getGenreDescription())) {
+			this.mFrameValueMap.get(Id3Frame.GENRE).remove(tag.getGenreDescription ());
+		}
+		if (this.validValue(tag.getTrack())) {
+			this.mFrameValueMap.get(Id3Frame.TRACK_NUMBER).remove(tag.getTrack());
+		}
+		if (this.validValue(tag.getYear())) {
+			this.mFrameValueMap.get(Id3Frame.YEAR).remove(tag.getYear());
+		}
+		if (this.validValue(tag.getAlbumArtist())) {
+			this.mFrameValueMap.get(Id3Frame.ALBUM_ARTIST).remove(tag.getAlbumArtist());
+		}
+
+
+		this.setChanged();
+		this.notifyObservers();
 	}
-	
+
 	/**
 	 * Writes every value that has been set via the setValue-Method into the tags of the fileTagMap.
 	 */
 	public void writeLocalChanges() {
-		for (ID3v2 tag : mFileTagMap.values()) {
-			if ((mSelectedFields & Id3Frame.TITLE.getSelectionValue()) != 0) {
-				tag.setTitle((String) mFrameValueMap.get(Id3Frame.TITLE).toArray()[0]);
+		for (final ID3v2 tag : this.mFileTagMap.values()) {
+			if ((this.mSelectedFields & Id3Frame.TITLE.getSelectionValue()) != 0) {
+				tag.setTitle((String) this.mFrameValueMap.get(Id3Frame.TITLE).toArray()[0]);
 			}
-			if ((mSelectedFields & Id3Frame.ARTIST.getSelectionValue()) != 0) {
-				tag.setArtist((String) mFrameValueMap.get(Id3Frame.ARTIST).toArray()[0]);
+			if ((this.mSelectedFields & Id3Frame.ARTIST.getSelectionValue()) != 0) {
+				tag.setArtist((String) this.mFrameValueMap.get(Id3Frame.ARTIST).toArray()[0]);
 			}
-			if ((mSelectedFields & Id3Frame.ALBUM_TITLE.getSelectionValue()) != 0) {
-				tag.setAlbum((String) mFrameValueMap.get(Id3Frame.ALBUM_TITLE).toArray()[0]);
+			if ((this.mSelectedFields & Id3Frame.ALBUM_TITLE.getSelectionValue()) != 0) {
+				tag.setAlbum((String) this.mFrameValueMap.get(Id3Frame.ALBUM_TITLE).toArray()[0]);
 			}
-			if ((mSelectedFields & Id3Frame.COMPOSER.getSelectionValue()) != 0) {
-				tag.setComposer((String) mFrameValueMap.get(Id3Frame.COMPOSER).toArray()[0]);
+			if ((this.mSelectedFields & Id3Frame.COMPOSER.getSelectionValue()) != 0) {
+				tag.setComposer((String) this.mFrameValueMap.get(Id3Frame.COMPOSER).toArray()[0]);
 			}
-			if ((mSelectedFields & Id3Frame.GENRE.getSelectionValue()) != 0) {
-				tag.setGenreDescription((String) mFrameValueMap.get(Id3Frame.GENRE).toArray()[0]);
-				tag.setGenre(ID3v1Genres.matchGenreDescription((String)mFrameValueMap.get(Id3Frame.GENRE).toArray()[0]));
+			if ((this.mSelectedFields & Id3Frame.GENRE.getSelectionValue()) != 0) {
+				tag.setGenreDescription((String) this.mFrameValueMap.get(Id3Frame.GENRE).toArray()[0]);
+				tag.setGenre(ID3v1Genres.matchGenreDescription((String)this.mFrameValueMap.get(Id3Frame.GENRE).toArray()[0]));
 			}
-			if ((mSelectedFields & Id3Frame.TRACK_NUMBER.getSelectionValue()) != 0) {
-				tag.setTrack((String) mFrameValueMap.get(Id3Frame.TRACK_NUMBER).toArray()[0]);
+			if ((this.mSelectedFields & Id3Frame.TRACK_NUMBER.getSelectionValue()) != 0) {
+				tag.setTrack((String) this.mFrameValueMap.get(Id3Frame.TRACK_NUMBER).toArray()[0]);
 			}
-			if ((mSelectedFields & Id3Frame.YEAR.getSelectionValue()) != 0) {
-				tag.setYear((String) mFrameValueMap.get(Id3Frame.YEAR).toArray()[0]);
+			if ((this.mSelectedFields & Id3Frame.YEAR.getSelectionValue()) != 0) {
+				tag.setYear((String) this.mFrameValueMap.get(Id3Frame.YEAR).toArray()[0]);
 			}
-			if ((mSelectedFields & Id3Frame.ALBUM_ARTIST.getSelectionValue()) != 0) {
-				tag.setAlbumArtist((String) mFrameValueMap.get(Id3Frame.ALBUM_ARTIST).toArray()[0]);
+			if ((this.mSelectedFields & Id3Frame.ALBUM_ARTIST.getSelectionValue()) != 0) {
+				tag.setAlbumArtist((String) this.mFrameValueMap.get(Id3Frame.ALBUM_ARTIST).toArray()[0]);
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the fileTagMap of the TagCloud.
 	 * @return - The FileTagMap
@@ -186,19 +221,19 @@ public class TagCloud extends Observable {
 	public Map<File, ID3v2> getTagMap() {
 		return this.mFileTagMap;
 	}
-	
-	private boolean validValue(String value) {
+
+	private boolean validValue(final String value) {
 		return value != null && !value.isEmpty();
 	}
 
 	public File getCoverFile() {
-		return mCover;
+		return this.mCover;
 	}
 
-	public void setCoverFile(File cover) {
+	public void setCoverFile(final File cover) {
 		this.mCover = cover;
-		
-		setChanged();
-		notifyObservers();
+
+		this.setChanged();
+		this.notifyObservers();
 	}
 }

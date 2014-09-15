@@ -10,20 +10,20 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.util.Log;
+
 import com.uncompilable.mp3tagger.model.Id3Frame;
 import com.uncompilable.mp3tagger.model.TagCloud;
 import com.uncompilable.mp3tagger.utility.Constants;
 
-import android.util.Log;
-
 public class AlbumCoverController {
-	private SelectionController mSelectionController;
+	private final SelectionController mSelectionCtrl;
 
 	private static final String API_URL = "https://ajax.googleapis.com/ajax/services/search/images?v=1.0&rsz=8&q=";
 
-	public AlbumCoverController(SelectionController selectionController) {
+	public AlbumCoverController(final SelectionController selectionCntrl) {
 		super();
-		this.mSelectionController = selectionController;
+		this.mSelectionCtrl = selectionCntrl;
 
 	}
 
@@ -31,53 +31,52 @@ public class AlbumCoverController {
 	 * Returns an Array of Strings with Image-URL's for the album in the Collection.
 	 * Returns null, of more than one Album Title is in the selection.
 	 * @return - The Image URL's or null.
-	 * @throws IOException 
-	 * @throws JSONException 
+	 * @throws IOException
+	 * @throws JSONException
 	 */
 	public String[] getAlbumImages() throws JSONException, IOException {
-		TagCloud tags = mSelectionController.getSelection().getTagCloud();
-		String[] albums  = tags.getValues(Id3Frame.ALBUM_TITLE).toArray(new String[tags.getValues(Id3Frame.ALBUM_TITLE).size()]);
-		String[] artists = tags.getValues(Id3Frame.ARTIST).toArray(new String[tags.getValues(Id3Frame.ARTIST).size()]);
+		final TagCloud tags = this.mSelectionCtrl.getSelection().getTagCloud();
+		final String[] albums  = tags.getValues(Id3Frame.ALBUM_TITLE).toArray(new String[tags.getValues(Id3Frame.ALBUM_TITLE).size()]);
+		final String[] artists = tags.getValues(Id3Frame.ARTIST).toArray(new String[tags.getValues(Id3Frame.ARTIST).size()]);
 
 		// Only search for Images, if there is only one Album Title
-		if (albums.length == 1) {
+		if (albums.length == Constants.ONE_ITEM) {
 
 			String searchTerm = albums[0].replace(" ", "%20");
 
 			// Add artist to search string, if there is only one
-			if (artists.length == 1) {
+			if (artists.length == Constants.ONE_ITEM) {
 				searchTerm = searchTerm.concat("%20".concat(artists[0].replace(" ", "%20")));
 			}
 
-			return connect(searchTerm);
+			return this.connect(searchTerm);
 
-		} else {
+		} else
 			return null;
-		}
 	}
 
-	private String[] connect(String searchTerm) throws JSONException, IOException {
+	private String[] connect(final String searchTerm) throws JSONException, IOException {
 		URL url;
 		URLConnection connection;
-		String urlString = API_URL + searchTerm;
+		final String urlString = API_URL + searchTerm;
 
 		Log.d(Constants.MAIN_TAG, "Trying to connect to URL " + urlString);
 		url = new URL(urlString);
 		connection = url.openConnection();
 
 		String line;
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		BufferedReader reader = null;
 
 		reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 		while((line = reader.readLine()) != null) {
 			builder.append(line);
 		}
-		JSONObject json = new JSONObject(builder.toString());
+		final JSONObject json = new JSONObject(builder.toString());
 
-		JSONArray resultArray = json.getJSONObject("responseData").getJSONArray("results");
+		final JSONArray resultArray = json.getJSONObject("responseData").getJSONArray("results");
 
-		String[] result = new String[resultArray.length()];
+		final String[] result = new String[resultArray.length()];
 		for (int i=0; i < resultArray.length(); i++) {
 			result[i] = resultArray.getJSONObject(i).getString("url");
 			Log.d(Constants.MAIN_TAG, result[i]);

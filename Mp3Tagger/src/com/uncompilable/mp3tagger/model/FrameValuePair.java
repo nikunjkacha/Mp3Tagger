@@ -8,13 +8,13 @@ package com.uncompilable.mp3tagger.model;
 public class FrameValuePair {
 	private Id3Frame mFrame;
 	private String mValue;
-	
+
 	/**
 	 * Creates a new FrameValuePair.
 	 * @param frame - The Frame of the pair
 	 * @param value - The value associated with the frame
 	 */
-	public FrameValuePair(Id3Frame frame, String value) {
+	public FrameValuePair(final Id3Frame frame, final String value) {
 		this.setFrame(frame);
 		this.setValue(value);
 	}
@@ -24,14 +24,14 @@ public class FrameValuePair {
 	 * @return - The pair's Id3Frame
 	 */
 	public Id3Frame getFrame() {
-		return mFrame;
+		return this.mFrame;
 	}
 
 	/**
 	 * Sets the frame of this pair.
 	 * @param frame - The new Id3Frame.
 	 */
-	public void setFrame(Id3Frame frame) {
+	public void setFrame(final Id3Frame frame) {
 		this.mFrame = frame;
 	}
 
@@ -40,14 +40,14 @@ public class FrameValuePair {
 	 * @return - The pair's value.
 	 */
 	public String getValue() {
-		return mValue;
+		return this.mValue;
 	}
 
 	/**
 	 * Sets the value of this pair.
 	 * @param value - The new value.
 	 */
-	public void setValue(String value) {
+	public void setValue(final String value) {
 		this.mValue = value;
 	}
 

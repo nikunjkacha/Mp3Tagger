@@ -9,28 +9,29 @@ import java.util.Observable;
  * @param <T>
  */
 public class ObservableArray<T> extends Observable {
-	private T[] mArray;
-	
-	public ObservableArray(T[] array) {
-		this.mArray = array;
+	private final T[] mArray;
+
+	public ObservableArray(final T[] array) {
+		super();
+		this.mArray = array.clone();
 	}
-	
-	public void set(int pos, T item) {
+
+	public void set(final int pos, final T item) {
 		this.mArray[pos] = item;
-		
-		setChanged();
-		notifyObservers();
+
+		this.setChanged();
+		this.notifyObservers();
 	}
-	
-	public T get(int pos) {
+
+	public T get(final int pos) {
 		return this.mArray[pos];
 	}
-	
+
 	public int length() {
 		return this.mArray.length;
 	}
-	
+
 	public T[] returnArray() {
-		return this.mArray;
+		return this.mArray.clone();
 	}
 }

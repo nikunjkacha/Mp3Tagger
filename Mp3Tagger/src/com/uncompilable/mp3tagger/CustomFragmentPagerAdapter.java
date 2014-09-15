@@ -12,20 +12,22 @@ public class CustomFragmentPagerAdapter extends FragmentPagerAdapter {
 	private final TagEditFragment mTagFragment;
 
 
-	public CustomFragmentPagerAdapter(FragmentManager fm) {
-		super(fm);
+	public CustomFragmentPagerAdapter(final FragmentManager manager) {
+		super(manager);
 
-		mSelectionFragment = new FileSelectionFragment();
-		mTagFragment       = new TagEditFragment      ();
+		this.mSelectionFragment = new FileSelectionFragment();
+		this.mTagFragment       = new TagEditFragment      ();
 	}
 
 	@Override
-	public Fragment getItem(int index) {
+	public Fragment getItem(final int index) {
 		switch (index) {
 		case SELECTION_FRAGMENT:
-			return mSelectionFragment;
+			return this.mSelectionFragment;
 		case TAG_FRAGMENT:
-			return mTagFragment;
+			return this.mTagFragment;
+		default:
+			//do nothing on default
 		}
 		return null;
 	}

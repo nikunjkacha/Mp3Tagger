@@ -16,18 +16,18 @@ import android.widget.ImageView;
 public class SimpleFileListAdapter extends AbstractFileListAdapter {
 	public static final int NONE_PLAYING = -1;
 
-	public SimpleFileListAdapter(MainActivity main, File[] files) {
+	public SimpleFileListAdapter(final MainActivity main, final File[] files) {
 		super(main, files);
 	}
 
 	@Override
 	public View getView(final int position, final View convertView, final ViewGroup parent) {
-		View result = super.getView(position, convertView, parent);
+		final View result = super.getView(position, convertView, parent);
 
 		final ImageView ivIcon = (ImageView) result.findViewById(R.id.ivIcon);
 		((CheckBox)result.findViewById(R.id.cbSelected)).setVisibility(View.INVISIBLE);
 
-		if (mFiles[position].equals(AbstractFileListAdapter.sPlaying)) {
+		if (this.mFiles[position].equals(AbstractFileListAdapter.sPlaying)) {
 			ivIcon.setImageResource(R.drawable.ic_playing);
 		} else {
 			ivIcon.setImageDrawable(null);

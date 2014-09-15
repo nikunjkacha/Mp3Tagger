@@ -16,68 +16,71 @@ public class AlbumCoverActivity extends FragmentActivity {
 	protected static final int COVER_FRAGMENT = 1;
 	protected static final int ERROR_FRAGMENT = 2;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_album_cover);
-
-		mAdapter = new AlbumGridAdapter(this);
-
-		mFetchTask = new CoverFetchTask(this);
-		mCoverFragment = new AlbumCoverFragment(mAdapter);
-
-		mErrorFragment = new AlbumCoverErrorFragment();
-
-		FragmentTransaction transaction = this.getFragmentManager().beginTransaction();
-		transaction.add(R.id.container, mCoverFragment);
-		transaction.commit();
-		mVisibleFragment = COVER_FRAGMENT;
-		
-		mFetchTask.execute("");
-		
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+	public AlbumCoverActivity() {
+		super();
 	}
 
-	protected void setVisibleFragment(int fragment) {
+	@Override
+	protected void onCreate(final Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		this.setContentView(R.layout.activity_album_cover);
+
+		this.mAdapter = new AlbumGridAdapter(this);
+
+		this.mFetchTask = new CoverFetchTask(this);
+		this.mCoverFragment = new AlbumCoverFragment(this.mAdapter);
+
+		this.mErrorFragment = new AlbumCoverErrorFragment();
+
+		final FragmentTransaction transaction = this.getFragmentManager().beginTransaction();
+		transaction.add(R.id.container, this.mCoverFragment);
+		transaction.commit();
+		this.mVisibleFragment = COVER_FRAGMENT;
+
+		this.mFetchTask.execute("");
+
+		this.getActionBar().setDisplayHomeAsUpEnabled(true);
+	}
+
+	protected void setVisibleFragment(final int fragment) {
 		if (fragment == COVER_FRAGMENT &&
-				mVisibleFragment != COVER_FRAGMENT) {
+				this.mVisibleFragment != COVER_FRAGMENT) {
 
 
-			FragmentTransaction transaction = this.getFragmentManager().beginTransaction();
-			transaction.remove(mErrorFragment);
-			transaction.replace(R.id.container, mCoverFragment);
+			final FragmentTransaction transaction = this.getFragmentManager().beginTransaction();
+			transaction.remove(this.mErrorFragment);
+			transaction.replace(R.id.container, this.mCoverFragment);
 			transaction.commit();
 
-			mVisibleFragment = fragment;
+			this.mVisibleFragment = fragment;
 		} else if (fragment == ERROR_FRAGMENT &&
-				mVisibleFragment != ERROR_FRAGMENT) {
+				this.mVisibleFragment != ERROR_FRAGMENT) {
 
-			FragmentTransaction transaction = this.getFragmentManager().beginTransaction();
-			transaction.remove(mCoverFragment);
-			transaction.replace(R.id.container, mErrorFragment);
+			final FragmentTransaction transaction = this.getFragmentManager().beginTransaction();
+			transaction.remove(this.mCoverFragment);
+			transaction.replace(R.id.container, this.mErrorFragment);
 			transaction.commit();
 
-			mVisibleFragment = fragment;
+			this.mVisibleFragment = fragment;
 		}
 
 	}
 
 	protected void runFetchTask() {
 		this.mFetchTask.cancel(true);
-		mFetchTask = new CoverFetchTask(this);
-		mFetchTask.execute("");
-		
-		setVisibleFragment(COVER_FRAGMENT);
+		this.mFetchTask = new CoverFetchTask(this);
+		this.mFetchTask.execute("");
+
+		this.setVisibleFragment(COVER_FRAGMENT);
 	}
 
 	protected AlbumGridAdapter getAdapter() {
-		return mAdapter;
+		return this.mAdapter;
 	}
-	
+
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
+	public boolean onOptionsItemSelected(final MenuItem item) {
+		if (item.getItemId() == android.R.id.home) {
 			this.finish();
 			return true;
 		}
