@@ -11,6 +11,7 @@ import com.uncompilable.mp3tagger.utility.Constants;
 
 import android.content.Context;
 import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -64,9 +65,6 @@ public abstract class AbstractFileListAdapter extends ArrayAdapter<File> {
 				public void onClick(View source) {
 					if (cbSelected.isChecked()) {
 						Collection<File> files = MainActivity.sSelectionController.scanDirectory(mFiles[position]);
-
-
-
 						new SelectionTask(mMain).execute(files.toArray(new File[files.size()]));
 					} else {
 						MainActivity.sSelectionController.removeFromSelection(mFiles[position]);
@@ -138,6 +136,17 @@ public abstract class AbstractFileListAdapter extends ArrayAdapter<File> {
 						player.setDataSource(new FileInputStream(linkedFile).getFD());
 						player.prepare();
 						player.start();
+						
+						player.setOnCompletionListener(new OnCompletionListener() {
+
+							@Override
+							public void onCompletion(MediaPlayer player) {
+								sPlaying = null;
+								sPlayer.reset();
+								if (adapter != null) adapter.notifyDataSetChanged();
+							}
+							
+						});
 						AbstractFileListAdapter.sPlaying = linkedFile;
 					} else {
 						AbstractFileListAdapter.sPlaying = null;

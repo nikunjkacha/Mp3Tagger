@@ -54,7 +54,8 @@
                     android:layout_weight="1"
                     android:inputType="text"
                     android:padding="10dp"
-                    android:selectAllOnFocus="true" />
+                    android:selectAllOnFocus="true"
+                    android:maxLength="@integer/maxInput" />
 
                 <CheckBox
                     android:id="@+id/cbTitle"
@@ -86,7 +87,8 @@
                     android:layout_weight="1"
                     android:inputType="text"
                     android:padding="10dp"
-                    android:selectAllOnFocus="true" />
+                    android:selectAllOnFocus="true" 
+                    android:maxLength="@integer/maxInput"/>
 
                 <CheckBox
                     android:id="@+id/cbArtist"
@@ -118,7 +120,8 @@
                     android:layout_weight="1"
                     android:inputType="text"
                     android:padding="10dp"
-                    android:selectAllOnFocus="true" />
+                    android:selectAllOnFocus="true"
+                    android:maxLength="@integer/maxInput" />
 
                 <CheckBox
                     android:id="@+id/cbAlbum"
@@ -150,7 +153,8 @@
                     android:layout_weight="1"
                     android:inputType="text"
                     android:padding="10dp"
-                    android:selectAllOnFocus="true" />
+                    android:selectAllOnFocus="true"
+                    android:maxLength="@integer/maxInput" />
 
                 <CheckBox
                     android:id="@+id/cbAlbumArtist"
@@ -182,7 +186,8 @@
                     android:layout_weight="1"
                     android:inputType="text"
                     android:padding="10dp"
-                    android:selectAllOnFocus="true" />
+                    android:selectAllOnFocus="true"
+                    android:maxLength="@integer/maxInput" />
 
                 <CheckBox
                     android:id="@+id/cbComposer"
@@ -299,7 +304,8 @@
                             android:layout_weight="1"
                             android:inputType="number"
                             android:padding="10dp"
-                            android:selectAllOnFocus="true" />
+                            android:selectAllOnFocus="true"
+                            android:maxLength="@integer/maxYearInput" />
 
                         <CheckBox
                             android:id="@+id/cbYear"

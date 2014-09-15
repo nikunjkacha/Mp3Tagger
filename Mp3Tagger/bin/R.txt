@@ -348,6 +348,9 @@ int id useLogo 0x7f060003
 int id vwSeperator 0x7f060048
 int id withText 0x7f06000c
 int integer abc_max_action_buttons 0x7f0a0000
+int integer maxInput 0x7f0a0001
+int integer maxTextLength 0x7f0a0003
+int integer maxYearInput 0x7f0a0002
 int layout abc_action_bar_decor 0x7f030000
 int layout abc_action_bar_decor_include 0x7f030001
 int layout abc_action_bar_decor_overlay 0x7f030002

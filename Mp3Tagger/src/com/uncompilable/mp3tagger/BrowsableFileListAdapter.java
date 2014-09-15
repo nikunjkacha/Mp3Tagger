@@ -16,13 +16,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 public class BrowsableFileListAdapter extends AbstractFileListAdapter {
-	public final static FileFilter MP3_DIR_FILTER = new FileFilter() {
-		@Override
-		public boolean accept(File file) {
-			return file.isDirectory() || file.getName().endsWith(".mp3");
-		}
-	};
-
 	private File mRootfile;
 
 	public BrowsableFileListAdapter(MainActivity main, File root) {
@@ -82,4 +75,10 @@ public class BrowsableFileListAdapter extends AbstractFileListAdapter {
 		return subDir.toArray(new File[subDir.size()]);
 	}
 
+	public final static FileFilter MP3_DIR_FILTER = new FileFilter() {
+		@Override
+		public boolean accept(File file) {
+			return file.isDirectory() || file.getName().endsWith(".mp3");
+		}
+	};
 }

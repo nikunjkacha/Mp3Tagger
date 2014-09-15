@@ -2,10 +2,8 @@ package com.uncompilable.mp3tagger;
 
 import java.io.File;
 
-import com.uncompilable.mp3tagger.utility.Constants;
-
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,10 +27,14 @@ public class FileSelectionFragment extends Fragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		String defaultRoot = PreferenceManager.getDefaultSharedPreferences(this.getActivity()).getString(Constants.PREF_KEY_ROOTDIR, "/");
+		File defaultRoot = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
+		
+		if (!defaultRoot.exists()) {
+			defaultRoot = new File("/");
+		}
 		View root = inflater.inflate(R.layout.selection_fragment, container, false);
 
-		mListAdapter = new BrowsableFileListAdapter((MainActivity)this.getActivity(), new File(defaultRoot));
+		mListAdapter = new BrowsableFileListAdapter((MainActivity)this.getActivity(), defaultRoot);
 
 		mLvFiles = (ListView) root.findViewById(R.id.lvFiles);
 		mLvFiles.setAdapter(mListAdapter);

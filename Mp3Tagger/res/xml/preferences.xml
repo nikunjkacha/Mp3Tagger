@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
-    <EditTextPreference 
-        android:key="pref_rootDir"
-        android:title="@string/pref_rootDir"
-        android:summary="@string/pref_rootDir_sum"
-        android:defaultValue="@string/pref_rootDir_default"
-        />
+
     <CheckBoxPreference
         android:key="pref_playable"
         android:title="@string/pref_playable"
