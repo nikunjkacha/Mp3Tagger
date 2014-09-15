@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="10dp"
-        android:textColor="#990000"
+        android:textColor="#FF0000"
         android:text="@string/coverError"
         android:layout_gravity="center"
         android:textAppearance="?android:attr/textAppearanceLarge" />
@@ -21,6 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_gravity="center_horizontal"
+        android:contentDescription="@string/refresh_description"
         android:paddingTop="10dp"
         android:src="@drawable/ic_refresh" />
 

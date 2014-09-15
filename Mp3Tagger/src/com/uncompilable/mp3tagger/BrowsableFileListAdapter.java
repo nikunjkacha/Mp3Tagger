@@ -9,9 +9,8 @@ import java.util.List;
 
 import com.uncompilable.mp3tagger.utility.Constants;
 
-import android.os.Environment;
-import android.preference.PreferenceManager;
 import android.util.Log;
+import android.os.Environment;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -45,8 +44,7 @@ public class BrowsableFileListAdapter extends AbstractFileListAdapter {
 			ivIcon.setImageResource(R.drawable.ic_mp3file);
 		}
 
-		boolean playable = PreferenceManager.getDefaultSharedPreferences(mMain).getBoolean(Constants.PREF_KEY_PLAYABLE, true);
-		result.setOnClickListener(new AbstractFileListAdapter.ItemClickListener(mFiles[position], this, playable) {
+		result.setOnClickListener(new AbstractFileListAdapter.ItemClickListener(mFiles[position], this) {
 			@Override
 			public void onClick(View source) {
 				super.onClick(source);

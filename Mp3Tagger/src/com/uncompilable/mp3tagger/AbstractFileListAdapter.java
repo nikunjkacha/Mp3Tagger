@@ -49,7 +49,7 @@ public abstract class AbstractFileListAdapter extends ArrayAdapter<File> {
 		final TextView  tvName      = (TextView ) result.findViewById(R.id.tvFilename);
 		final CheckBox  cbSelected  = (CheckBox ) result.findViewById(R.id.cbSelected);
 
-		ItemClickListener listener = new ItemClickListener(mFiles[position], this, PreferenceManager.getDefaultSharedPreferences(mMain).getBoolean(Constants.PREF_KEY_PLAYABLE, true));
+		ItemClickListener listener = new ItemClickListener(mFiles[position], this);
 		result.setOnClickListener(listener);
 		tvName.setText(mFiles[position].getName());
 
@@ -64,9 +64,9 @@ public abstract class AbstractFileListAdapter extends ArrayAdapter<File> {
 				public void onClick(View source) {
 					if (cbSelected.isChecked()) {
 						Collection<File> files = MainActivity.sSelectionController.scanDirectory(mFiles[position]);
-						
-						
-						
+
+
+
 						new SelectionTask(mMain).execute(files.toArray(new File[files.size()]));
 					} else {
 						MainActivity.sSelectionController.removeFromSelection(mFiles[position]);
@@ -115,24 +115,19 @@ public abstract class AbstractFileListAdapter extends ArrayAdapter<File> {
 
 	protected class ItemClickListener implements OnClickListener {
 		private File linkedFile;
-		private boolean playable;
 		private AbstractFileListAdapter adapter;
 
 		protected ItemClickListener(File linkedFile, AbstractFileListAdapter adapter) {
-			this(linkedFile, adapter, true);
-		}
-
-		protected ItemClickListener(File linkedFile, AbstractFileListAdapter adapter, boolean playable) {
 			super();
 			this.linkedFile = linkedFile;
-			this.playable = playable;
 			this.adapter = adapter;
 		}
 
 
 		@Override
 		public void onClick(View source) {
-			if (linkedFile.isFile() && linkedFile.getName().endsWith(".mp3") && playable) {
+			if (linkedFile.isFile() && linkedFile.getName().endsWith(".mp3") && 
+					PreferenceManager.getDefaultSharedPreferences(mMain).getBoolean(Constants.PREF_KEY_PLAYABLE, true)) {
 				MediaPlayer player = AbstractFileListAdapter.sPlayer;
 				try {
 					if (player.isPlaying()) {

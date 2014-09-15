@@ -51,4 +51,6 @@
     <string name="title_activity_album_cover">Select Album Cover</string>
 
     <string name="icon_description">Graphical Icon that adds visual feedback as for the type of the Filelist entry (directory or mp3-file)</string>
+    <string name="refresh_description">Refresh</string>
+    <string name="cover_description">Fetch Album Covers from the internet</string>
 </resources>

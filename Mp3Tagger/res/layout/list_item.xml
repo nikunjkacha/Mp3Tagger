@@ -2,7 +2,8 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:clickable="false"
-    android:focusable="false" >
+    android:focusable="false" 
+    android:background="@drawable/item_states">
 
     <ImageView
         android:id="@+id/ivIcon"
