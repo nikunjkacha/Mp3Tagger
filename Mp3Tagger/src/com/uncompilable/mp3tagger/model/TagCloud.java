@@ -171,10 +171,10 @@ public class TagCloud extends Observable {
 				tag.setTrack((String) mFrameValueMap.get(Id3Frame.TRACK_NUMBER).toArray()[0]);
 			}
 			if ((mSelectedFields & Id3Frame.YEAR.getSelectionValue()) != 0) {
-				tag.setTrack((String) mFrameValueMap.get(Id3Frame.YEAR).toArray()[0]);
+				tag.setYear((String) mFrameValueMap.get(Id3Frame.YEAR).toArray()[0]);
 			}
 			if ((mSelectedFields & Id3Frame.ALBUM_ARTIST.getSelectionValue()) != 0) {
-				tag.setTrack((String) mFrameValueMap.get(Id3Frame.ALBUM_ARTIST).toArray()[0]);
+				tag.setAlbumArtist((String) mFrameValueMap.get(Id3Frame.ALBUM_ARTIST).toArray()[0]);
 			}
 		}
 	}

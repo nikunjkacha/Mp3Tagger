@@ -69,7 +69,7 @@ public class TagEditFragment extends Fragment {
 		bindViews(root);
 		
 		mNpTrack.setMinValue(0);
-		mNpTrack.setMaxValue(512);
+		mNpTrack.setMaxValue(getResources().getInteger(R.integer.maxInput));
 
 		mSpGenre.setAdapter(new ArrayAdapter<String>(mMain, R.layout.simple_textview_item, ID3v1Genres.GENRES));
 

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <integer name="maxInput">32</integer>
+    <integer name="maxInput">48</integer>
     <integer name="maxYearInput">4</integer>
    	<integer name="maxTextLength">48</integer>
+   	<integer name="maxTrackNumber">250</integer>
     
 </resources>
